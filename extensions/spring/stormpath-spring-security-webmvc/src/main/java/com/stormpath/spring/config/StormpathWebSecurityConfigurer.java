@@ -187,6 +187,12 @@ public class StormpathWebSecurityConfigurer extends SecurityConfigurerAdapter<De
     @Value("#{ @environment['stormpath.web.social.github.uri'] ?: '/callbacks/github' }")
     protected String githubCallbackUri;
 
+    @Value("#{ @environment['stormpath.web.me.enabled'] ?: true }")
+    protected boolean meEnabled;
+
+    @Value("#{ @environment['stormpath.web.me.uri'] ?: '/me' }")
+    protected String meUri;
+
     @Autowired(required = false)
     @Qualifier("loginPreHandler")
     protected WebHandler loginPreHandler;
@@ -271,6 +277,12 @@ public class StormpathWebSecurityConfigurer extends SecurityConfigurerAdapter<De
                     .antMatchers(facebookCallbackUri).permitAll()
                     .antMatchers(linkedinCallbackUri).permitAll()
                     .and().exceptionHandling().authenticationEntryPoint(stormpathAuthenticationEntryPoint); //Fix for https://github.com/stormpath/stormpath-sdk-java/issues/714
+            }
+
+            if (meEnabled) {
+                http
+                    .authorizeRequests().antMatchers(meUri).fullyAuthenticated()
+                    .and().exceptionHandling().authenticationEntryPoint(stormpathAuthenticationEntryPoint);
             }
 
             http.authorizeRequests()

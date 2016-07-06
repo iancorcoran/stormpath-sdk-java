@@ -16,6 +16,7 @@
 package com.stormpath.spring.config;
 
 import com.stormpath.sdk.lang.Assert;
+import com.stormpath.sdk.lang.Strings;
 import org.apache.http.HttpStatus;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,6 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
 
 /**
  * Fix for https://github.com/stormpath/stormpath-sdk-java/issues/714
@@ -63,7 +65,11 @@ public class StormpathAuthenticationEntryPoint implements AuthenticationEntryPoi
     private void sendRedirect(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         if (!isAuthenticated()) {
-            response.sendRedirect(this.loginUri);
+            String requestURI = request.getRequestURI() + (Strings.hasText(request.getQueryString()) ? "?" + request.getQueryString() : "");
+
+            String encodedCurrentUrlString = URLEncoder.encode(requestURI, "UTF-8");
+
+            response.sendRedirect(this.loginUri + "?next=" + encodedCurrentUrlString);
             response.setStatus(HttpStatus.SC_TEMPORARY_REDIRECT);
         }
     }
