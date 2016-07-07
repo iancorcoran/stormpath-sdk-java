@@ -15,6 +15,7 @@
  */
 package com.stormpath.sdk.servlet.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stormpath.sdk.servlet.filter.mvc.ControllerFilter;
 import com.stormpath.sdk.servlet.mvc.MeController;
 
@@ -28,7 +29,12 @@ public class MeFilter extends ControllerFilter {
     @Override
     protected void onInit() throws ServletException {
 
-        MeController controller = new MeController(getConfig().getMeExpandedProperties());
+        MeController controller = new MeController(
+                getConfig().getMeExpandedProperties(),
+                new ObjectMapper(),
+                getConfig().getProducesMediaTypes(),
+                getConfig().getLoginControllerConfig().getUri()
+        );
 
         setController(controller);
 

@@ -19,8 +19,6 @@ import com.stormpath.sdk.lang.Assert;
 import com.stormpath.sdk.servlet.filter.ContentNegotiationResolver;
 import com.stormpath.sdk.servlet.http.MediaType;
 import com.stormpath.sdk.servlet.http.UnresolvedMediaTypeException;
-import com.stormpath.sdk.servlet.http.UserAgent;
-import com.stormpath.sdk.servlet.http.UserAgents;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -46,10 +44,10 @@ public class DefaultViewResolver implements ViewResolver {
 
     @Override
     public View getView(ViewModel model, HttpServletRequest request) {
-
         try {
             MediaType mediaType = ContentNegotiationResolver.INSTANCE.getContentType(request, null, producesMediaTypes);
-            if (mediaType.equals(MediaType.APPLICATION_JSON)) {
+            //Check for explicit stormpathJsonView in case of /me it should always render JSON
+            if (mediaType.equals(MediaType.APPLICATION_JSON) || "stormpathJsonView".equals(model.getViewName())) {
                 return jsonView;
             }
             if (mediaType.equals(MediaType.TEXT_HTML)) {
@@ -60,6 +58,5 @@ public class DefaultViewResolver implements ViewResolver {
         }
 
         return null;
-
     }
 }

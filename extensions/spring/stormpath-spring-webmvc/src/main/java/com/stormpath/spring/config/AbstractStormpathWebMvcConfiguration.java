@@ -1195,8 +1195,12 @@ public abstract class AbstractStormpathWebMvcConfiguration {
             }
         }
 
-        MeController controller = new MeController(results);
-
+        MeController controller = new MeController(
+                results,
+                objectMapper,
+                produces,
+                stormpathLoginControllerConfigResolver().getUri()
+        );
         return createSpaAwareSpringController(controller);
     }
 

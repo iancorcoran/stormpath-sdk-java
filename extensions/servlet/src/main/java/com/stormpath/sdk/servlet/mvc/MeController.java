@@ -15,11 +15,15 @@
  */
 package com.stormpath.sdk.servlet.mvc;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stormpath.sdk.account.Account;
+import com.stormpath.sdk.lang.Strings;
 import com.stormpath.sdk.servlet.account.AccountResolver;
+import com.stormpath.sdk.servlet.http.MediaType;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
 import java.util.List;
 
 /**
@@ -29,10 +33,14 @@ public class MeController extends AbstractController {
 
     private List<String> expands;
     private AccountModelFactory accountModelFactory;
+    private ObjectMapper objectMapper;
 
-    public MeController(List<String> expands) {
+    public MeController(List<String> expands, ObjectMapper objectMapper, String produces, String nextUri) {
         this.expands = expands;
         this.accountModelFactory = new DefaultAccountModelFactory();
+        this.objectMapper = objectMapper;
+        this.nextUri = nextUri;
+        this.produces = MediaType.parseMediaTypes(produces);
     }
 
     @Override
@@ -42,7 +50,7 @@ public class MeController extends AbstractController {
 
     /**
      * Successful JSON login will forward here as a POST so that the account model is returned.
-     *
+     * <p>
      * See: https://github.com/stormpath/stormpath-sdk-java/issues/682
      *
      * @since 1.0.0
@@ -58,13 +66,34 @@ public class MeController extends AbstractController {
 
         response.setHeader("Cache-Control", "no-store, no-cache");
         response.setHeader("Pragma", "no-cache");
+        response.setHeader("Content-Type", "application/json");
 
-        if(account != null) {
-            return new DefaultViewModel("stormpathJsonView", java.util.Collections.singletonMap("account", accountModelFactory.toMap(account, expands)));
+        //Since we don't have a restrict authentication mechanism for spring-webmvc we check if the account is there and redirect to login as per spec
+        if (account == null) {
+            if (isHtmlPreferred(request, response)) {
+                String method = request.getMethod();
+                if (method.equalsIgnoreCase("GET")) {
+
+                    String requestURI = request.getRequestURI() + (Strings.hasText(request.getQueryString()) ? "?" + request.getQueryString() : "");
+
+                    String encodedCurrentUrlString = URLEncoder.encode(requestURI, "UTF-8");
+
+                    nextUri += "?next=" + encodedCurrentUrlString;
+                    response.sendRedirect(nextUri);
+                }
+            }
+            if (isJsonPreferred(request, response)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            }
+            return null;
         }
 
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
-        return new DefaultViewModel("stormpathJsonView", null);
+        //There is an issue with spring boot webmvc, it register ContentNegotiatingViewResolver with the highest priority,
+        //and this view resolver doesn't allow to override the view to force JSON even if the Accept header has a different content type
+        //for example if the user goes to the /me in a browser it would try to render a thymeleaf view, so instead of returning a view
+        //we write directly to the response since no matter what we always return JSON for this controller.
+        //This way we don't introduce any custom view resolver that might have issues with the user application.
+        objectMapper.writeValue(response.getOutputStream(), java.util.Collections.singletonMap("account", accountModelFactory.toMap(account, expands)));
+        return null;
     }
 }
