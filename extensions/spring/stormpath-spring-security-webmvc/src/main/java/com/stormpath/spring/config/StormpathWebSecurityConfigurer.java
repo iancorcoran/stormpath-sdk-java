@@ -282,8 +282,7 @@ public class StormpathWebSecurityConfigurer extends SecurityConfigurerAdapter<De
 
             if (meEnabled) {
                 http
-                    .authorizeRequests().antMatchers(meUri).fullyAuthenticated()
-                    .and().exceptionHandling().authenticationEntryPoint(stormpathAuthenticationEntryPoint);
+                    .authorizeRequests().antMatchers(meUri).fullyAuthenticated();
             }
 
             http.authorizeRequests()
