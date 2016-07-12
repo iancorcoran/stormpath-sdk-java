@@ -68,6 +68,9 @@ public abstract class AbstractStormpathWebSecurityConfiguration {
     @Value("#{ @environment['stormpath.web.login.uri'] ?: '/login' }")
     protected String loginUri;
 
+    @Value("#{ @environment['stormpath.web.me.uri'] ?: '/me' }")
+    protected String meUri;
+
     @Value("#{ @environment['stormpath.web.login.nextUri'] ?: '/' }")
     protected String loginNextUri;
 
@@ -147,6 +150,6 @@ public abstract class AbstractStormpathWebSecurityConfiguration {
     }
 
     public AuthenticationEntryPoint stormpathAuthenticationEntryPoint() {
-        return new StormpathAuthenticationEntryPoint(loginUri);
+        return new StormpathAuthenticationEntryPoint(loginUri, produces, meUri);
     }
 }

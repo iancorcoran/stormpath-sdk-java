@@ -17,13 +17,13 @@ package com.stormpath.sdk.servlet.mvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stormpath.sdk.account.Account;
-import com.stormpath.sdk.lang.Strings;
 import com.stormpath.sdk.servlet.account.AccountResolver;
+import com.stormpath.sdk.servlet.filter.DefaultLoginPageRedirector;
+import com.stormpath.sdk.servlet.filter.LoginPageRedirector;
 import com.stormpath.sdk.servlet.http.MediaType;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.net.URLEncoder;
 import java.util.List;
 
 /**
@@ -34,6 +34,7 @@ public class MeController extends AbstractController {
     private List<String> expands;
     private AccountModelFactory accountModelFactory;
     private ObjectMapper objectMapper;
+    private LoginPageRedirector loginPageRedirector;
 
     public MeController(List<String> expands, ObjectMapper objectMapper, String produces, String nextUri) {
         this.expands = expands;
@@ -41,6 +42,7 @@ public class MeController extends AbstractController {
         this.objectMapper = objectMapper;
         this.nextUri = nextUri;
         this.produces = MediaType.parseMediaTypes(produces);
+        this.loginPageRedirector = new DefaultLoginPageRedirector(nextUri);
     }
 
     @Override
@@ -71,16 +73,7 @@ public class MeController extends AbstractController {
         //Since we don't have a restrict authentication mechanism for spring-webmvc we check if the account is there and redirect to login as per spec
         if (account == null) {
             if (isHtmlPreferred(request, response)) {
-                String method = request.getMethod();
-                if (method.equalsIgnoreCase("GET")) {
-
-                    String requestURI = request.getRequestURI() + (Strings.hasText(request.getQueryString()) ? "?" + request.getQueryString() : "");
-
-                    String encodedCurrentUrlString = URLEncoder.encode(requestURI, "UTF-8");
-
-                    nextUri += "?next=" + encodedCurrentUrlString;
-                    response.sendRedirect(nextUri);
-                }
+                loginPageRedirector.redirectToLoginPage(request, response);
             }
             if (isJsonPreferred(request, response)) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
