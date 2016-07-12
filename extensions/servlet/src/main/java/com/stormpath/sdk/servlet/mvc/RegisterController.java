@@ -41,6 +41,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.stormpath.sdk.servlet.mvc.View.STORMPATH_JSON_VIEW_NAME;
+
 /**
  * @since 1.0.RC4
  */
@@ -188,7 +190,7 @@ public class RegisterController extends FormController {
 
         if (isJsonPreferred(req, resp)) {
             //noinspection unchecked
-            return new DefaultViewModel("stormpathJsonView", java.util.Collections.singletonMap("account", accountModelFactory.toMap(account, Collections.EMPTY_LIST)));
+            return new DefaultViewModel(STORMPATH_JSON_VIEW_NAME, java.util.Collections.singletonMap("account", accountModelFactory.toMap(account, Collections.EMPTY_LIST)));
         }
 
         if (status == AccountStatus.ENABLED) {

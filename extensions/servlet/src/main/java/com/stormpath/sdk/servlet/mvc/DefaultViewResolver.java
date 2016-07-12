@@ -23,6 +23,8 @@ import com.stormpath.sdk.servlet.http.UnresolvedMediaTypeException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+import static com.stormpath.sdk.servlet.mvc.View.STORMPATH_JSON_VIEW_NAME;
+
 /**
  * @since 1.0.0
  */
@@ -47,7 +49,7 @@ public class DefaultViewResolver implements ViewResolver {
         try {
             MediaType mediaType = ContentNegotiationResolver.INSTANCE.getContentType(request, null, producesMediaTypes);
             //Check for explicit stormpathJsonView in case of /me it should always render JSON
-            if (mediaType.equals(MediaType.APPLICATION_JSON) || "stormpathJsonView".equals(model.getViewName())) {
+            if (mediaType.equals(MediaType.APPLICATION_JSON) || STORMPATH_JSON_VIEW_NAME.equals(model.getViewName())) {
                 return jsonView;
             }
             if (mediaType.equals(MediaType.TEXT_HTML)) {

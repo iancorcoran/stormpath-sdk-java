@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.stormpath.sdk.servlet.mvc.View.STORMPATH_JSON_VIEW_NAME;
+
 /**
  * @since 1.0.RC4
  */
@@ -208,7 +210,7 @@ public abstract class FormController extends AbstractController {
         if (isJsonPreferred(request, response)) {
             //TODO according to the spec if multiple errors only the most relevant should be return in case of JSON response, we don't have way to know that for now
             response.setStatus(errors.get(0).getStatus());
-            return new DefaultViewModel("stormpathJsonView", errors.get(0).toMap());
+            return new DefaultViewModel(STORMPATH_JSON_VIEW_NAME, errors.get(0).toMap());
         } else {
             Map<String, ?> model = createModel(request, response, form, errors);
             return new DefaultViewModel(view, model);

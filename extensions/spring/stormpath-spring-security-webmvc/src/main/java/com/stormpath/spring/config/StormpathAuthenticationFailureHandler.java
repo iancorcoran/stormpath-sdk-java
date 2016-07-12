@@ -17,6 +17,7 @@ package com.stormpath.spring.config;
 
 import com.stormpath.sdk.authc.AuthenticationRequest;
 import com.stormpath.sdk.lang.Assert;
+import com.stormpath.sdk.lang.Strings;
 import com.stormpath.sdk.servlet.authc.FailedAuthenticationRequestEvent;
 import com.stormpath.sdk.servlet.authc.impl.DefaultFailedAuthenticationRequestEvent;
 import com.stormpath.sdk.servlet.event.RequestEvent;
@@ -67,8 +68,8 @@ public class StormpathAuthenticationFailureHandler implements AuthenticationFail
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     public StormpathAuthenticationFailureHandler(
-        String defaultFailureUrl, Publisher<RequestEvent> publisher,
-        ErrorModelFactory errorModelFactory, String produces
+            String defaultFailureUrl, Publisher<RequestEvent> publisher,
+            ErrorModelFactory errorModelFactory, String produces
     ) {
         Assert.hasText(defaultFailureUrl, "defaultFailureUrl argument cannot be null.");
         Assert.notNull(publisher, "RequestEvent Publisher argument cannot be null.");
@@ -86,7 +87,7 @@ public class StormpathAuthenticationFailureHandler implements AuthenticationFail
         // Content Negotiation per https://github.com/stormpath/stormpath-sdk-java/issues/682
         try {
             MediaType mediaType =
-                ContentNegotiationResolver.INSTANCE.getContentType(request, response, supportedMediaTypes);
+                    ContentNegotiationResolver.INSTANCE.getContentType(request, response, supportedMediaTypes);
 
             if (MediaType.APPLICATION_JSON.equals(mediaType)) {
                 request.getRequestDispatcher(meUri).forward(request, response);
@@ -101,10 +102,12 @@ public class StormpathAuthenticationFailureHandler implements AuthenticationFail
                 //Don't loose the next param if present
                 String next = request.getParameter("next");
 
-                if (redirectUrl.contains("?")) {
-                    redirectUrl += "&next=" + URLEncoder.encode(next, "UTF-8");
-                } else {
-                    redirectUrl += "?next=" + URLEncoder.encode(next, "UTF-8");
+                if (Strings.hasText(next)) {
+                    if (redirectUrl.contains("?")) {
+                        redirectUrl += "&next=" + URLEncoder.encode(next, "UTF-8");
+                    } else {
+                        redirectUrl += "?next=" + URLEncoder.encode(next, "UTF-8");
+                    }
                 }
 
                 redirectStrategy.sendRedirect(request, response, redirectUrl);

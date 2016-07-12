@@ -179,6 +179,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.stormpath.sdk.servlet.mvc.View.STORMPATH_JSON_VIEW_NAME;
+
 /**
  * @since 1.0.RC4
  */
@@ -371,9 +373,6 @@ public abstract class AbstractStormpathWebMvcConfiguration {
 
     @Value("#{ @environment['stormpath.web.application.domain'] }")
     protected String baseDomainName;
-
-    @Value("#{ @environment['stormpath.web.json.view'] ?: 'stormpathJsonView' }")
-    protected String jsonView;
 
     //Spring's ThymeleafViewResolver defaults to an order of Ordered.LOWEST_PRECEDENCE - 5.  We want to ensure that this
     //JSON view resolver has a slightly higher precedence to ensure that JSON is rendered and not a Thymeleaf template.
@@ -595,7 +594,7 @@ public abstract class AbstractStormpathWebMvcConfiguration {
 
             @Override
             public View resolveViewName(String viewName, Locale locale) throws Exception {
-                if (viewName.equals(jsonView)) {
+                if (viewName.equals(STORMPATH_JSON_VIEW_NAME)) {
                     return stormpathJsonView();
                 }
                 return null;
@@ -907,7 +906,7 @@ public abstract class AbstractStormpathWebMvcConfiguration {
         Controller c = createSpringController(controller);
 
         if (produces.contains(MediaType.APPLICATION_JSON.toString())) {
-            c = new SpringSpaController(c, jsonView, stormpathProducesMediaTypes());
+            c = new SpringSpaController(c, STORMPATH_JSON_VIEW_NAME, stormpathProducesMediaTypes());
         }
 
         return c;
