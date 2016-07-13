@@ -42,6 +42,8 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.List;
 
+import static com.stormpath.sdk.servlet.mvc.Controller.NEXT_QUERY_PARAM;
+
 /**
  * A simple {@link AuthenticationFailureHandler} implementation that delegates to an actual/delegate handler for
  * handling logic, but will then send a Stormpath {@link FailedAuthenticationRequestEvent} after delegate invocation.
@@ -53,17 +55,19 @@ import java.util.List;
 public class StormpathAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
     @Value("#{ @environment['stormpath.web.me.uri'] ?: '/me' }")
-    protected String meUri;
+    private String meUri;
 
     private static final Logger log = LoggerFactory.getLogger(StormpathAuthenticationFailureHandler.class);
 
     private final Publisher<RequestEvent> publisher;
 
-    private String defaultFailureUrl;
+    private final String defaultFailureUrl;
 
     private final ErrorModelFactory errorModelFactory;
 
     private final List<MediaType> supportedMediaTypes;
+
+    private ContentNegotiationResolver contentNegotiationResolver;
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
@@ -78,6 +82,7 @@ public class StormpathAuthenticationFailureHandler implements AuthenticationFail
         this.publisher = publisher;
         this.errorModelFactory = errorModelFactory;
         this.supportedMediaTypes = MediaType.parseMediaTypes(produces);
+        this.contentNegotiationResolver = ContentNegotiationResolver.INSTANCE;
     }
 
     @Override
@@ -86,8 +91,7 @@ public class StormpathAuthenticationFailureHandler implements AuthenticationFail
 
         // Content Negotiation per https://github.com/stormpath/stormpath-sdk-java/issues/682
         try {
-            MediaType mediaType =
-                    ContentNegotiationResolver.INSTANCE.getContentType(request, response, supportedMediaTypes);
+            MediaType mediaType = contentNegotiationResolver.getContentType(request, response, supportedMediaTypes);
 
             if (MediaType.APPLICATION_JSON.equals(mediaType)) {
                 request.getRequestDispatcher(meUri).forward(request, response);
@@ -100,13 +104,13 @@ public class StormpathAuthenticationFailureHandler implements AuthenticationFail
                 String redirectUrl = defaultFailureUrl;
 
                 //Don't loose the next param if present
-                String next = request.getParameter("next");
+                String next = request.getParameter(NEXT_QUERY_PARAM);
 
                 if (Strings.hasText(next)) {
                     if (redirectUrl.contains("?")) {
-                        redirectUrl += "&next=" + URLEncoder.encode(next, "UTF-8");
+                        redirectUrl += "&" + NEXT_QUERY_PARAM + "=" + URLEncoder.encode(next, "UTF-8");
                     } else {
-                        redirectUrl += "?next=" + URLEncoder.encode(next, "UTF-8");
+                        redirectUrl += "?" + NEXT_QUERY_PARAM + "=" + URLEncoder.encode(next, "UTF-8");
                     }
                 }
 
@@ -142,5 +146,20 @@ public class StormpathAuthenticationFailureHandler implements AuthenticationFail
                     "the raw AuthenticationRequest used by the StormpathAuthenticationProvider.";
             throw new UnsupportedOperationException(msg);
         }
+    }
+
+    //For testing purposes
+    public void setRedirectStrategy(RedirectStrategy redirectStrategy) {
+        this.redirectStrategy = redirectStrategy;
+    }
+
+    //For testing purposes
+    public void setContentNegotiationResolver(ContentNegotiationResolver contentNegotiationResolver) {
+        this.contentNegotiationResolver = contentNegotiationResolver;
+    }
+
+    //For testing purposes
+    public void setMeUri(String meUri) {
+        this.meUri = meUri;
     }
 }

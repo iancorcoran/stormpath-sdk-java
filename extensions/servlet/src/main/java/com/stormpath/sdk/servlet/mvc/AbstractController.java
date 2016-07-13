@@ -46,8 +46,6 @@ public abstract class AbstractController implements Controller {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractController.class);
 
-    private static final String NEXT_QUERY_PARAM = "next";
-
     private static final HttpServlet DEFAULT_HANDLER = new HttpServlet() {
     };
 

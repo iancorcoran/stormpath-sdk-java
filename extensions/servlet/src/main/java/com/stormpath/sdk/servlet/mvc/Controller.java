@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 1.0.RC4
  */
 public interface Controller {
-
+    String NEXT_QUERY_PARAM = "next";
     /**
      * Processes a view request (either to render or handle submission) and returns a {@link ViewModel} that represents
      * the resulting view to be rendered.  A {@code null} return value indicates that the controller implementation
