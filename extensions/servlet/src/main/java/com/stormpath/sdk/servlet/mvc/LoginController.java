@@ -15,12 +15,15 @@
  */
 package com.stormpath.sdk.servlet.mvc;
 
+import com.stormpath.sdk.account.Account;
 import com.stormpath.sdk.authc.AuthenticationResult;
 import com.stormpath.sdk.http.HttpMethod;
 import com.stormpath.sdk.lang.Assert;
 import com.stormpath.sdk.lang.Collections;
 import com.stormpath.sdk.oauth.AccessTokenResult;
 import com.stormpath.sdk.servlet.application.ApplicationResolver;
+import com.stormpath.sdk.servlet.authc.impl.DefaultSuccessfulAuthenticationRequestEvent;
+import com.stormpath.sdk.servlet.authc.impl.TransientAuthenticationResult;
 import com.stormpath.sdk.servlet.config.Config;
 import com.stormpath.sdk.servlet.config.RegisterEnabledPredicate;
 import com.stormpath.sdk.servlet.config.RegisterEnabledResolver;
@@ -177,22 +180,31 @@ public class LoginController extends FormController {
             }
         }
 
-        String usernameOrEmail = form.getFieldValue("login");
-        String password = form.getFieldValue("password");
+        // check to see if account already exists in request
+        Account account = (Account) req.getAttribute(Account.class.getName());
+        if (account != null) {
+            AuthenticationResult authcResult = new TransientAuthenticationResult(account);
+            authenticationResultSaver.set(req, resp, authcResult);
+            eventPublisher.publish(new DefaultSuccessfulAuthenticationRequestEvent(req, resp, null, authcResult));
+        } else {
+            String usernameOrEmail = form.getFieldValue("login");
+            String password = form.getFieldValue("password");
 
-        req.login(usernameOrEmail, password);
+            req.login(usernameOrEmail, password);
 
-        AccessTokenResult result = (AccessTokenResult) req.getAttribute(OAuthTokenResolver.REQUEST_ATTR_NAME);
-        saveResult(req, resp, result);
+            AccessTokenResult result = (AccessTokenResult) req.getAttribute(OAuthTokenResolver.REQUEST_ATTR_NAME);
+            account = result.getAccount();
+            saveResult(req, resp, result);
+        }
 
         if (postLoginHandler != null) {
-            if (!postLoginHandler.handle(req, resp, result.getAccount())) {
+            if (!postLoginHandler.handle(req, resp, account)) {
                 return null;
             }
         }
 
         if (isJsonPreferred(req, resp)) {
-            return new DefaultViewModel(view, java.util.Collections.singletonMap("account", accountModelFactory.toMap(result.getAccount(), java.util.Collections.<String>emptyList())));
+            return new DefaultViewModel(view, java.util.Collections.singletonMap("account", accountModelFactory.toMap(account, java.util.Collections.<String>emptyList())));
         }
 
         //otherwise HTML view:

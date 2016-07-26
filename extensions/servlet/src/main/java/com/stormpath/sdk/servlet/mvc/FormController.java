@@ -15,10 +15,17 @@
  */
 package com.stormpath.sdk.servlet.mvc;
 
+import com.stormpath.sdk.account.Account;
+import com.stormpath.sdk.account.AccountStatus;
 import com.stormpath.sdk.http.HttpMethod;
 import com.stormpath.sdk.lang.Assert;
 import com.stormpath.sdk.lang.Collections;
 import com.stormpath.sdk.lang.Strings;
+import com.stormpath.sdk.provider.ProviderAccountRequest;
+import com.stormpath.sdk.provider.ProviderAccountRequestBuilder;
+import com.stormpath.sdk.provider.ProviderAccountResult;
+import com.stormpath.sdk.provider.Providers;
+import com.stormpath.sdk.servlet.application.ApplicationResolver;
 import com.stormpath.sdk.servlet.csrf.CsrfTokenManager;
 import com.stormpath.sdk.servlet.csrf.DisabledCsrfTokenManager;
 import com.stormpath.sdk.servlet.filter.ControllerConfigResolver;
@@ -32,6 +39,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static com.stormpath.sdk.servlet.mvc.JacksonFieldValueResolver.MARSHALLED_OBJECT;
 
 /**
  * @since 1.0.RC4
@@ -234,6 +243,24 @@ public abstract class FormController extends AbstractController {
     protected void validate(HttpServletRequest request, HttpServletResponse response, Form form) {
 
         validateCsrfToken(request, response, form);
+
+        // check for request body and no parameters
+        if (request.getParameterMap().size() == 0 && request.getContentLength() > 0) {
+            // Read from request
+            Map<String, Object> map = (Map<String, Object>) request.getAttribute(MARSHALLED_OBJECT);
+            Map<String, String> providerData = (Map<String, String>) map.get("providerData");
+            if (providerData != null) {
+                ProviderAccountRequestBuilder requestBuilder = Providers.FACEBOOK.account();
+                String accessToken = providerData.get("accessToken");
+                ProviderAccountRequest accountRequest = requestBuilder.setAccessToken(accessToken).build();
+                ProviderAccountResult result = ApplicationResolver.INSTANCE.getApplication(request).getAccount(accountRequest);
+                // todo: handle unverified
+                if (result.getAccount().getStatus().equals(AccountStatus.ENABLED)) {
+                    request.setAttribute(Account.class.getName(), result.getAccount());
+                    return;
+                }
+            }
+        }
 
         //ensure required fields are present:
         List<Field> fields = form.getFields();
