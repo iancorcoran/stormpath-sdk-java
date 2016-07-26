@@ -16,9 +16,12 @@
 package com.stormpath.spring.config;
 
 import com.stormpath.sdk.account.Account;
+import com.stormpath.sdk.application.Application;
 import com.stormpath.sdk.authc.AuthenticationResult;
 import com.stormpath.sdk.cache.Cache;
+import com.stormpath.sdk.lang.BiPredicate;
 import com.stormpath.sdk.servlet.application.ApplicationLoader;
+import com.stormpath.sdk.servlet.application.ApplicationResolver;
 import com.stormpath.sdk.servlet.authz.RequestAuthorizer;
 import com.stormpath.sdk.servlet.client.ClientLoader;
 import com.stormpath.sdk.servlet.config.Config;
@@ -36,20 +39,11 @@ import com.stormpath.sdk.servlet.filter.ServerUriResolver;
 import com.stormpath.sdk.servlet.filter.StormpathFilter;
 import com.stormpath.sdk.servlet.filter.UsernamePasswordRequestFactory;
 import com.stormpath.sdk.servlet.filter.WrappedServletRequestFactory;
-import com.stormpath.sdk.servlet.filter.account.AuthenticationJwtFactory;
-import com.stormpath.sdk.servlet.filter.DefaultFilterBuilder;
-import com.stormpath.sdk.servlet.filter.FilterBuilder;
-import com.stormpath.sdk.servlet.filter.FilterChainResolver;
-import com.stormpath.sdk.servlet.filter.ServerUriResolver;
-import com.stormpath.sdk.servlet.filter.StormpathFilter;
-import com.stormpath.sdk.servlet.filter.UsernamePasswordRequestFactory;
-import com.stormpath.sdk.servlet.filter.WrappedServletRequestFactory;
 import com.stormpath.sdk.servlet.filter.account.AuthenticationResultSaver;
 import com.stormpath.sdk.servlet.filter.account.JwtAccountResolver;
 import com.stormpath.sdk.servlet.filter.account.JwtSigningKeyResolver;
 import com.stormpath.sdk.servlet.filter.oauth.AccessTokenAuthenticationRequestFactory;
 import com.stormpath.sdk.servlet.filter.oauth.AccessTokenResultFactory;
-import com.stormpath.sdk.servlet.form.Field;
 import com.stormpath.sdk.servlet.http.MediaType;
 import com.stormpath.sdk.servlet.http.Resolver;
 import com.stormpath.sdk.servlet.http.Saver;
@@ -58,8 +52,8 @@ import com.stormpath.sdk.servlet.http.authc.HeaderAuthenticator;
 import com.stormpath.sdk.servlet.http.authc.HttpAuthenticationScheme;
 import com.stormpath.sdk.servlet.idsite.IdSiteOrganizationContext;
 import com.stormpath.sdk.servlet.mvc.ErrorModelFactory;
-import com.stormpath.sdk.servlet.mvc.FormFieldParser;
 import com.stormpath.sdk.servlet.mvc.provider.AccountStoreModelFactory;
+import com.stormpath.spring.mvc.ChangePasswordControllerConfigResolver;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -80,12 +74,8 @@ import org.springframework.web.servlet.view.JstlView;
 import javax.servlet.Filter;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @since 1.0.RC4
@@ -130,6 +120,13 @@ public class StormpathWebMvcConfiguration extends AbstractStormpathWebMvcConfigu
         bean.setPrefix("/WEB-INF/jsp/");
         bean.setSuffix(".jsp");
         return bean;
+    }
+
+    /** @since 1.0.0 */
+    @Bean
+    @Override
+    public ApplicationResolver stormpathApplicationResolver() {
+        return super.stormpathApplicationResolver();
     }
 
     /** @since 1.0.0 */
@@ -400,6 +397,18 @@ public class StormpathWebMvcConfiguration extends AbstractStormpathWebMvcConfigu
     }
 
     @Bean
+    @Override
+    public Resolver<Boolean> stormpathRegisterEnabledResolver() {
+        return super.stormpathRegisterEnabledResolver();
+    }
+
+    @Bean
+    @Override
+    public BiPredicate<Boolean, Application> stormpathRegisterEnabledPredicate() {
+        return super.stormpathRegisterEnabledPredicate();
+    }
+
+    @Bean
     public Controller stormpathVerifyController() {
         return super.stormpathVerifyController();
     }
@@ -504,12 +513,7 @@ public class StormpathWebMvcConfiguration extends AbstractStormpathWebMvcConfigu
     }
 
     @Bean
-    public ControllerConfigResolver stormpathSendVerificationEmailControllerConfigResolver() {
-        return super.stormpathSendVerificationEmailControllerConfigResolver();
-    }
-
-    @Bean
-    public ControllerConfigResolver stormpathChangePasswordControllerConfigResolver() {
+    public ChangePasswordControllerConfigResolver stormpathChangePasswordControllerConfigResolver() {
         return super.stormpathChangePasswordControllerConfigResolver();
     }
 

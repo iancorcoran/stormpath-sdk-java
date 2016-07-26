@@ -16,18 +16,25 @@
 package com.stormpath.sdk.servlet.config.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stormpath.sdk.application.Application;
 import com.stormpath.sdk.authc.AuthenticationResult;
 import com.stormpath.sdk.lang.Assert;
+import com.stormpath.sdk.lang.BiPredicate;
 import com.stormpath.sdk.lang.Classes;
 import com.stormpath.sdk.lang.Strings;
+import com.stormpath.sdk.servlet.application.ApplicationResolver;
+import com.stormpath.sdk.servlet.config.RegisterEnabledResolver;
 import com.stormpath.sdk.servlet.config.Config;
 import com.stormpath.sdk.servlet.config.CookieConfig;
 import com.stormpath.sdk.servlet.config.Factory;
 import com.stormpath.sdk.servlet.config.ImplementationClassResolver;
+import com.stormpath.sdk.servlet.filter.ChangePasswordConfigResolver;
+import com.stormpath.sdk.servlet.filter.ChangePasswordServletControllerConfigResolver;
 import com.stormpath.sdk.servlet.event.RequestEvent;
 import com.stormpath.sdk.servlet.event.impl.Publisher;
 import com.stormpath.sdk.servlet.filter.ControllerConfigResolver;
 import com.stormpath.sdk.servlet.filter.ServletControllerConfigResolver;
+import com.stormpath.sdk.servlet.http.Resolver;
 import com.stormpath.sdk.servlet.http.Saver;
 import com.stormpath.sdk.servlet.http.authc.AccountStoreResolver;
 import com.stormpath.sdk.servlet.mvc.WebHandler;
@@ -82,6 +89,18 @@ public class DefaultConfig implements Config {
 
         this.ACCESS_TOKEN_COOKIE_CONFIG = new AccessTokenCookieConfig(CFG);
         this.REFRESH_TOKEN_COOKIE_CONFIG = new RefreshTokenCookieConfig(CFG);
+
+        // 748: If stormpath.web.idSite.enabled property is true and the stormpath.web.callback.enabled is false,
+        // this is a config error that should be caught on startup.
+        if (isIdSiteEnabled() && !isCallbackEnabled()) {
+            throw new IllegalArgumentException("Cannot enable ID Site without having callback enabled. Please change 'stormpath.web.callback.enabled' to true " +
+                "or disable ID Site by setting 'stormpath.web.idSite.enabled` to false.");
+        }
+    }
+
+    @Override
+    public ApplicationResolver getApplicationResolver() {
+        return ApplicationResolver.INSTANCE; //TODO remove static usage
     }
 
     @Override
@@ -119,24 +138,8 @@ public class DefaultConfig implements Config {
     }
 
     @Override
-    public ControllerConfigResolver getSendVerificationEmailControllerConfig() {
-        //TODO hack since verify and send verify should be single config and controller but now is not
-        return new ServletControllerConfigResolver(this, CFG, "sendVerificationEmail") {
-            @Override
-            public String getNextUri() {
-                return getVerifyControllerConfig().getNextUri();
-            }
-
-            @Override
-            public boolean isEnabled() {
-                return getVerifyControllerConfig().isEnabled();
-            }
-        };
-    }
-
-    @Override
-    public ControllerConfigResolver getChangePasswordControllerConfig() {
-        return new ServletControllerConfigResolver(this, CFG, "changePassword");
+    public ChangePasswordConfigResolver getChangePasswordControllerConfig() {
+        return new ChangePasswordServletControllerConfigResolver(this, CFG, "changePassword");
     }
 
     @Override
@@ -169,11 +172,6 @@ public class DefaultConfig implements Config {
     @Override
     public boolean isRegisterAutoLoginEnabled() {
         return CFG.getBoolean("stormpath.web.register.autoLogin");
-    }
-
-    @Override
-    public boolean isSamlLoginEnabled() {
-        return CFG.getBoolean("stormpath.web.callback.enabled");
     }
 
     @Override
@@ -269,6 +267,34 @@ public class DefaultConfig implements Config {
         }
     }
 
+    @Override
+    public Resolver<Boolean> getRegisterEnabledResolver() {
+        String key = "stormpath.web.register.enabled.resolver";
+        if (containsKey(key)) {
+            try {
+                return getInstance(key);
+            } catch (ServletException e) {
+                throw new RuntimeException("Couldn't instantiate stormpath.web.register.enabled.resolver", e);
+            }
+        } else {
+            boolean enabled = CFG.getBoolean("stormpath.web.register.enabled");
+            ApplicationResolver appResolver = getApplicationResolver();
+            BiPredicate<Boolean,Application> regEnabledPredicate = getRegisterEnabledPredicate();
+            RegisterEnabledResolver resolver = new RegisterEnabledResolver(enabled, appResolver, regEnabledPredicate);
+            SINGLETONS.put(key, resolver);
+            return resolver;
+        }
+    }
+
+    @Override
+    public BiPredicate<Boolean, Application> getRegisterEnabledPredicate() {
+        try {
+            return getInstance("stormpath.web.register.enabled.predicate");
+        } catch (ServletException e) {
+            throw new RuntimeException("Couldn't instantiate stormpath.web.register.enabled.predicate", e);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getInstance(String classPropertyName) throws ServletException {
@@ -293,7 +319,7 @@ public class DefaultConfig implements Config {
 
         if (!expectedType.isInstance(instance)) {
             String msg = "Configured " + classPropertyName + " class name must be an instance of " +
-                    expectedType.getName();
+                expectedType.getName();
             throw new ServletException(msg);
         }
 
@@ -303,7 +329,7 @@ public class DefaultConfig implements Config {
     @Override
     public <T> Map<String, T> getInstances(String propertyNamePrefix, Class<T> expectedType) throws ServletException {
         Map<String, Class<T>> classes =
-                new ImplementationClassResolver<T>(this, propertyNamePrefix, expectedType).findImplementationClasses();
+            new ImplementationClassResolver<T>(this, propertyNamePrefix, expectedType).findImplementationClasses();
 
         Map<String, T> instances = new LinkedHashMap<String, T>(classes.size());
 
@@ -362,7 +388,7 @@ public class DefaultConfig implements Config {
             instance = Classes.newInstance(val);
         } catch (Exception e) {
             String msg = "Unable to instantiate " + classPropertyName + " class name " +
-                    val + ": " + e.getMessage();
+                val + ": " + e.getMessage();
             throw new ServletException(msg, e);
         }
 
@@ -371,7 +397,7 @@ public class DefaultConfig implements Config {
                 ((ServletContextInitializable) instance).init(this.servletContext);
             } catch (Exception e) {
                 String msg = "Unable to initialize " + classPropertyName + " instance of type " +
-                        val + ": " + e.getMessage();
+                    val + ": " + e.getMessage();
                 throw new ServletException(msg, e);
             }
         }

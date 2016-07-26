@@ -216,7 +216,6 @@ class ControllerTest {
                 new RegisterController(),
                 new SamlController(),
                 new SamlResultController(),
-                new SendVerificationEmailController(),
                 new VerifyController()
         ].each {
             assertTrue it.isNotAllowedIfAuthenticated()

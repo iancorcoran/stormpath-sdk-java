@@ -21,6 +21,8 @@ import com.stormpath.sdk.servlet.account.AccountResolver;
 import com.stormpath.sdk.servlet.filter.DefaultLoginPageRedirector;
 import com.stormpath.sdk.servlet.filter.LoginPageRedirector;
 import com.stormpath.sdk.servlet.http.MediaType;
+import com.stormpath.sdk.servlet.config.Config;
+import com.stormpath.sdk.servlet.http.UserAgents;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

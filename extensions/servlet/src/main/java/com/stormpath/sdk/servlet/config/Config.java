@@ -16,10 +16,15 @@
 package com.stormpath.sdk.servlet.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stormpath.sdk.application.Application;
 import com.stormpath.sdk.authc.AuthenticationResult;
+import com.stormpath.sdk.lang.BiPredicate;
+import com.stormpath.sdk.servlet.application.ApplicationResolver;
+import com.stormpath.sdk.servlet.filter.ChangePasswordConfigResolver;
 import com.stormpath.sdk.servlet.event.RequestEvent;
 import com.stormpath.sdk.servlet.event.impl.Publisher;
 import com.stormpath.sdk.servlet.filter.ControllerConfigResolver;
+import com.stormpath.sdk.servlet.http.Resolver;
 import com.stormpath.sdk.servlet.http.Saver;
 import com.stormpath.sdk.servlet.http.authc.AccountStoreResolver;
 import com.stormpath.sdk.servlet.mvc.WebHandler;
@@ -35,6 +40,8 @@ public interface Config extends Map<String, String> {
 
     ObjectMapper getObjectMapper();
 
+    ApplicationResolver getApplicationResolver();
+
     ControllerConfigResolver getLoginControllerConfig();
 
     ControllerConfigResolver getLogoutControllerConfig();
@@ -45,9 +52,7 @@ public interface Config extends Map<String, String> {
 
     ControllerConfigResolver getVerifyControllerConfig();
 
-    ControllerConfigResolver getSendVerificationEmailControllerConfig();
-
-    ControllerConfigResolver getChangePasswordControllerConfig();
+    ChangePasswordConfigResolver getChangePasswordControllerConfig();
 
     Saver<AuthenticationResult> getAuthenticationResultSaver();
 
@@ -56,8 +61,6 @@ public interface Config extends Map<String, String> {
     Publisher<RequestEvent> getRequestEventPublisher();
 
     boolean isRegisterAutoLoginEnabled();
-
-    boolean isSamlLoginEnabled();
 
     /**
      * @since 1.0.RC6
@@ -87,6 +90,10 @@ public interface Config extends Map<String, String> {
     WebHandler getRegisterPreHandler();
 
     WebHandler getRegisterPostHandler();
+
+    BiPredicate<Boolean,Application> getRegisterEnabledPredicate();
+
+    Resolver<Boolean> getRegisterEnabledResolver();
 
     <T> T getInstance(String classPropertyName) throws ServletException;
 
