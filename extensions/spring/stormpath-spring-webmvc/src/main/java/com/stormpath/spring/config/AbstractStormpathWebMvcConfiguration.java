@@ -1292,6 +1292,11 @@ public abstract class AbstractStormpathWebMvcConfiguration {
 
         return new Config() {
             @Override
+            public ObjectMapper getObjectMapper() {
+                return objectMapper;
+            }
+
+            @Override
             public WebHandler getLoginPreHandler() {
                 return loginPreHandler;
             }

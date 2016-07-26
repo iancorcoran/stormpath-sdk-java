@@ -15,6 +15,7 @@
  */
 package com.stormpath.sdk.servlet.config.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stormpath.sdk.authc.AuthenticationResult;
 import com.stormpath.sdk.lang.Assert;
 import com.stormpath.sdk.lang.Classes;
@@ -81,6 +82,15 @@ public class DefaultConfig implements Config {
 
         this.ACCESS_TOKEN_COOKIE_CONFIG = new AccessTokenCookieConfig(CFG);
         this.REFRESH_TOKEN_COOKIE_CONFIG = new RefreshTokenCookieConfig(CFG);
+    }
+
+    @Override
+    public ObjectMapper getObjectMapper() {
+        try {
+            return getInstance("stormpath.web.json.objectMapperFactory", ObjectMapper.class);
+        } catch (ServletException e) {
+            throw new RuntimeException("Couldn't instantiate the default ObjectMapper", e);
+        }
     }
 
     @Override
