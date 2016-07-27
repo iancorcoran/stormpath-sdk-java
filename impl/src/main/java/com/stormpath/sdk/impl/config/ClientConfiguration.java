@@ -171,6 +171,4 @@ public class ClientConfiguration {
                 ", proxyPassword='" + proxyPassword + '\'' +
                 '}';
     }
-
-
 }

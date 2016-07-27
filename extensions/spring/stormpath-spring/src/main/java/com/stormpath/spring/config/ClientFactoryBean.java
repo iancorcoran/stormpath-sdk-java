@@ -18,7 +18,11 @@ package com.stormpath.spring.config;
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.authc.AuthenticatorResolver;
 import com.stormpath.sdk.cache.CacheManager;
-import com.stormpath.sdk.client.*;
+import com.stormpath.sdk.client.AuthenticationScheme;
+import com.stormpath.sdk.client.Client;
+import com.stormpath.sdk.client.ClientBuilder;
+import com.stormpath.sdk.client.Clients;
+import com.stormpath.sdk.client.Proxy;
 import com.stormpath.spring.cache.SpringCacheManager;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
