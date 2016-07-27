@@ -341,7 +341,7 @@ public interface ClientBuilder {
      * @return the ClientBuilder instance for method chaining
      */
     @Deprecated
-    ClientBuilder setAuthenticationScheme(AuthenticationScheme authenticationScheme);
+    ClientBuilder setAuthenticationScheme(AuthenticationSchemes authenticationScheme);
 
     ClientBuilder setAuthenticationSchemeResolver(AuthenticationSchemeResolver authenticationSchemeResolver);
 

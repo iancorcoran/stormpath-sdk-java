@@ -1,7 +1,8 @@
 package com.stormpath.sdk.impl.config;
 
+import com.stormpath.sdk.authc.AuthenticationSchemeResolver;
 import com.stormpath.sdk.cache.CacheConfigurationBuilder;
-import com.stormpath.sdk.client.AuthenticationScheme;
+import com.stormpath.sdk.client.AuthenticationSchemes;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -26,7 +27,8 @@ public class ClientConfiguration {
     private Map<String, CacheConfigurationBuilder> cacheManagerCaches = new LinkedHashMap<>();
     private String baseUrl;
     private int connectionTimeout;
-    private AuthenticationScheme authenticationScheme;
+    private AuthenticationSchemes authenticationScheme;
+    private AuthenticationSchemeResolver authenticationSchemeResolver;
     private int proxyPort;
     private String proxyHost;
     private String proxyUsername;
@@ -56,12 +58,20 @@ public class ClientConfiguration {
         this.apiKeySecret = apiKeySecret;
     }
 
-    public AuthenticationScheme getAuthenticationScheme() {
+    public AuthenticationSchemes getAuthenticationScheme() {
         return authenticationScheme;
     }
 
-    public void setAuthenticationScheme(AuthenticationScheme authenticationScheme) {
+    public void setAuthenticationScheme(AuthenticationSchemes authenticationScheme) {
         this.authenticationScheme = authenticationScheme;
+    }
+
+    public AuthenticationSchemeResolver getAuthenticationSchemeResolver() {
+        return authenticationSchemeResolver;
+    }
+
+    public void setAuthenticationSchemeResolver(AuthenticationSchemeResolver authenticationSchemeResolver) {
+        this.authenticationSchemeResolver = authenticationSchemeResolver;
     }
 
     public String getBaseUrl() {
@@ -162,4 +172,6 @@ public class ClientConfiguration {
                 ", proxyPassword='" + proxyPassword + '\'' +
                 '}';
     }
+
+
 }
