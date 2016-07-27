@@ -10,7 +10,12 @@ import com.stormpath.sdk.client.AuthenticationSchemes;
 public class DefaultAuthenticationSchemeResolver implements AuthenticationSchemeResolver {
     @Override
     public AuthenticationScheme resolveAuthenticationScheme(AuthenticationSchemes authenticationScheme) {
-        switch (authenticationScheme){
+
+        if (authenticationScheme == null) {
+            authenticationScheme = AuthenticationSchemes.SAUTHC1;
+        }
+
+        switch (authenticationScheme) {
             case BASIC:
                 return new BasicAuthenticationScheme();
             case SAUTHC1:
