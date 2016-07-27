@@ -15,6 +15,7 @@
  */
 package com.stormpath.sdk.client;
 
+import com.stormpath.sdk.authc.AuthenticationSchemeResolver;
 import com.stormpath.sdk.cache.CacheManager;
 
 /**
@@ -342,7 +343,7 @@ public interface ClientBuilder {
     @Deprecated
     ClientBuilder setAuthenticationScheme(AuthenticationScheme authenticationScheme);
 
-    ClientBuilder setAuthenticationSchemeResolver(A)
+    ClientBuilder setAuthenticationSchemeResolver(AuthenticationSchemeResolver authenticationSchemeResolver);
 
     /**
      * Sets both the timeout until a connection is established and the socket timeout (i.e. a maximum period of inactivity
