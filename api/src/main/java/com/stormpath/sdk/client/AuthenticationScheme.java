@@ -29,7 +29,7 @@ import com.stormpath.sdk.http.HttpAuthenticator;
  *
  * @since 0.9.3
  */
-public interface AuthenticationScheme {
+public interface AuthenticationScheme <T extends HttpAuthenticator> {
 
-    HttpAuthenticator getAuthenticator();
+    T getAuthenticator();
 }
