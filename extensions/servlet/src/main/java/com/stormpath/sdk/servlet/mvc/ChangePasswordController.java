@@ -18,7 +18,6 @@ package com.stormpath.sdk.servlet.mvc;
 import com.stormpath.sdk.account.Account;
 import com.stormpath.sdk.application.Application;
 import com.stormpath.sdk.authc.AuthenticationResult;
-import com.stormpath.sdk.impl.http.HttpHeaders;
 import com.stormpath.sdk.lang.Assert;
 import com.stormpath.sdk.lang.Strings;
 import com.stormpath.sdk.resource.ResourceException;
@@ -32,11 +31,7 @@ import com.stormpath.sdk.servlet.http.Saver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 /**
  * @since 1.0.RC4
  */
