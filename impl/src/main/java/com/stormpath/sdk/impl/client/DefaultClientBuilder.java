@@ -17,6 +17,7 @@ package com.stormpath.sdk.impl.client;
 
 import com.stormpath.sdk.api.ApiKeyBuilder;
 import com.stormpath.sdk.api.ApiKeys;
+import com.stormpath.sdk.authc.AuthenticationSchemeResolver;
 import com.stormpath.sdk.cache.CacheConfigurationBuilder;
 import com.stormpath.sdk.cache.CacheManager;
 import com.stormpath.sdk.cache.CacheManagerBuilder;
@@ -226,6 +227,12 @@ public class DefaultClientBuilder implements ClientBuilder {
     public ClientBuilder setAuthenticationScheme(AuthenticationScheme authenticationScheme) {
         this.clientConfig.setAuthenticationScheme(authenticationScheme);
         return this;
+    }
+
+    @Override
+    public ClientBuilder setAuthenticationSchemeResolver(AuthenticationSchemeResolver authenticationSchemeResolver) {
+
+        return null;
     }
 
     /* @since 1.0.RC3 */
