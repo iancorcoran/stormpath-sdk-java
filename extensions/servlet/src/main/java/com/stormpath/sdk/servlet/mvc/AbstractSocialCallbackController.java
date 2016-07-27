@@ -29,6 +29,7 @@ import com.stormpath.sdk.servlet.config.Config;
 import com.stormpath.sdk.servlet.event.RequestEvent;
 import com.stormpath.sdk.servlet.event.impl.Publisher;
 import com.stormpath.sdk.servlet.http.Saver;
+import com.stormpath.sdk.servlet.mvc.provider.SocialUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,6 +41,7 @@ public abstract class AbstractSocialCallbackController extends AbstractControlle
 
     protected Saver<AuthenticationResult> authenticationResultSaver;
     private final Publisher<RequestEvent> eventPublisher;
+    private final SocialUtils socialUtils;
 
     public AbstractSocialCallbackController(String loginNextUri,
                                             Saver<AuthenticationResult> authenticationResultSaver,
@@ -51,6 +53,7 @@ public abstract class AbstractSocialCallbackController extends AbstractControlle
         Assert.notNull(this.authenticationResultSaver, "authenticationResultSaver cannot be null.");
         Assert.hasLength(this.nextUri, "nextUri cannot be null.");
         Assert.notNull(this.eventPublisher, "eventPublish cannot be null.");
+        this.socialUtils = new SocialUtils();
     }
 
     @Override
@@ -62,7 +65,9 @@ public abstract class AbstractSocialCallbackController extends AbstractControlle
         return ApplicationResolver.INSTANCE.getApplication(request);
     }
 
-    protected abstract ProviderAccountRequest getAccountProviderRequest(HttpServletRequest request);
+    protected ProviderAccountRequest getAccountProviderRequest(HttpServletRequest request) {
+        return socialUtils.getAccountProviderRequest(request);
+    }
 
     @Override
     protected ViewModel doGet(HttpServletRequest request, HttpServletResponse response) throws Exception {

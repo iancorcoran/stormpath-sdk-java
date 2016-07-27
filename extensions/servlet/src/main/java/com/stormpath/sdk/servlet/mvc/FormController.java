@@ -22,9 +22,7 @@ import com.stormpath.sdk.lang.Assert;
 import com.stormpath.sdk.lang.Collections;
 import com.stormpath.sdk.lang.Strings;
 import com.stormpath.sdk.provider.ProviderAccountRequest;
-import com.stormpath.sdk.provider.ProviderAccountRequestBuilder;
 import com.stormpath.sdk.provider.ProviderAccountResult;
-import com.stormpath.sdk.provider.Providers;
 import com.stormpath.sdk.servlet.application.ApplicationResolver;
 import com.stormpath.sdk.servlet.csrf.CsrfTokenManager;
 import com.stormpath.sdk.servlet.csrf.DisabledCsrfTokenManager;
@@ -33,14 +31,13 @@ import com.stormpath.sdk.servlet.form.DefaultField;
 import com.stormpath.sdk.servlet.form.DefaultForm;
 import com.stormpath.sdk.servlet.form.Field;
 import com.stormpath.sdk.servlet.form.Form;
+import com.stormpath.sdk.servlet.mvc.provider.SocialUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import static com.stormpath.sdk.servlet.mvc.JacksonFieldValueResolver.MARSHALLED_OBJECT;
 
 /**
  * @since 1.0.RC4
@@ -50,12 +47,11 @@ public abstract class FormController extends AbstractController {
     protected CsrfTokenManager csrfTokenManager;
     protected RequestFieldValueResolver fieldValueResolver;
     protected List<Field> formFields;
+    private final SocialUtils socialUtils = new SocialUtils();
 
     public final static String SPRING_SECURITY_AUTHENTICATION_FAILED_KEY = "SPRING_SECURITY_AUTHENTICATION_FAILED_MESSAGE";
 
-    public FormController() {
-
-    }
+    public FormController() {}
 
     public FormController(ControllerConfigResolver configResolver, String produces) {
         super(configResolver, produces);
@@ -246,17 +242,13 @@ public abstract class FormController extends AbstractController {
 
         // check for request body and no parameters
         if (request.getParameterMap().size() == 0 && request.getContentLength() > 0) {
-            // Read from request
-            Map<String, Object> map = (Map<String, Object>) request.getAttribute(MARSHALLED_OBJECT);
-            Map<String, String> providerData = (Map<String, String>) map.get("providerData");
-            if (providerData != null) {
-                ProviderAccountRequestBuilder requestBuilder = Providers.FACEBOOK.account();
-                String accessToken = providerData.get("accessToken");
-                ProviderAccountRequest accountRequest = requestBuilder.setAccessToken(accessToken).build();
+            // Read from request to see if social information exists
+            ProviderAccountRequest accountRequest = socialUtils.getAccountProviderRequest(request);
+            if (accountRequest != null) {
                 ProviderAccountResult result = ApplicationResolver.INSTANCE.getApplication(request).getAccount(accountRequest);
-                // todo: handle unverified
-                if (result.getAccount().getStatus().equals(AccountStatus.ENABLED)) {
-                    request.setAttribute(Account.class.getName(), result.getAccount());
+                Account account = result.getAccount();
+                if (account.getStatus().equals(AccountStatus.ENABLED)) {
+                    request.setAttribute(Account.class.getName(), account);
                     return;
                 }
             }
