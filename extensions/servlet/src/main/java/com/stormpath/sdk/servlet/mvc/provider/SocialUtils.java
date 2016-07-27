@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.stormpath.sdk.servlet.filter.DefaultFilter.accessToken;
 import static com.stormpath.sdk.servlet.mvc.JacksonFieldValueResolver.MARSHALLED_OBJECT;
 
 /**
@@ -52,21 +53,33 @@ public class SocialUtils {
             switch (providerId) {
                 case "facebook": {
                     String accessToken = ServletUtils.getCleanParam(request, "accessToken");
+                    if (accessToken == null) {
+                        accessToken = providerData.get("accessToken");
+                    }
                     accountRequest = Providers.FACEBOOK.account().setAccessToken(accessToken).build();
                     break;
                 }
                 case "github": {
                     String code = ServletUtils.getCleanParam(request, "code");
+                    if (code == null) {
+                        code = providerData.get("code");
+                    }
                     accountRequest = Providers.GITHUB.account().setAccessToken(exchangeCodeForAccessToken(code, request)).build();
                     break;
                 }
                 case "google": {
                     String code = ServletUtils.getCleanParam(request, "code");
+                    if (code == null) {
+                        code = providerData.get("code");
+                    }
                     accountRequest = Providers.GOOGLE.account().setCode(code).build();
                     break;
                 }
                 case "linkedin": {
                     String code = ServletUtils.getCleanParam(request, "code");
+                    if (code == null) {
+                        code = providerData.get("code");
+                    }
                     accountRequest = Providers.LINKEDIN.account().setCode(code).build();
                     break;
                 }
