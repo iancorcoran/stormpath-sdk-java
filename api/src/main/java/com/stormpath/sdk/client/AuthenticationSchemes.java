@@ -17,6 +17,23 @@ package com.stormpath.sdk.client;
 
 
 public enum AuthenticationSchemes {
+/*
+BASIC("com.stormpath.sdk.impl.http.authc.BasicRequestAuthenticator"), //HTTP Basic Authentication		+    HttpAuthenticator getAuthenticator();
+-    SAUTHC1("com.stormpath.sdk.impl.http.authc.SAuthc1RequestAuthenticator"); //Digest Authentication
+-
+-    private final String requestAuthenticatorClassName;
+-
+-    private AuthenticationScheme(String requestAuthenticatorClassName) {
+-        Assert.notNull(requestAuthenticatorClassName, "requestAuthenticatorClassName cannot be null");
+-        this.requestAuthenticatorClassName = requestAuthenticatorClassName;
+-    }
+-
+-    public String getRequestAuthenticatorClassName() {
+-        return this.requestAuthenticatorClassName;
+-    }
+ */
 
+    BASIC,
+    SAUTHC1
 
 }
