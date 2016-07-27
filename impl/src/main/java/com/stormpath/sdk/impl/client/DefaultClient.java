@@ -26,6 +26,7 @@ import com.stormpath.sdk.application.CreateApplicationRequest;
 import com.stormpath.sdk.cache.CacheManager;
 import com.stormpath.sdk.client.AuthenticationScheme;
 import com.stormpath.sdk.client.Client;
+import com.stormpath.sdk.client.ClientCredentials;
 import com.stormpath.sdk.client.Proxy;
 import com.stormpath.sdk.directory.CreateDirectoryRequest;
 import com.stormpath.sdk.directory.Directory;
@@ -134,7 +135,7 @@ public class DefaultClient implements Client {
             throw new RuntimeException(msg);
         }
 
-        Constructor<RequestExecutor> ctor = Classes.getConstructor(requestExecutorClass, com.stormpath.sdk.api.ApiKey.class, Proxy.class, AuthenticationScheme.class, Integer.class);
+        Constructor<RequestExecutor> ctor = Classes.getConstructor(requestExecutorClass, ClientCredentials.class, Proxy.class, AuthenticationScheme.class, Integer.class);
 
         return Classes.instantiate(ctor, apiKey, proxy, authenticationScheme, connectionTimeout);
     }
