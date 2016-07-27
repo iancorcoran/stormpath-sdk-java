@@ -134,17 +134,17 @@ public class HttpClientRequestExecutor implements RequestExecutor {
     }
 
     /**
-     * Creates a new {@code HttpClientRequestExecutor} using the specified {@code ApiKey} and optional {@code Proxy}
+     * Creates a new {@code HttpClientRequestExecutor} using the specified {@code ClientCredentials} and optional {@code Proxy}
      * configuration.
      * @param clientCredentials the Stormpath account credentials that will be used to authenticate the client with Stormpath's API sever
      * @param proxy the HTTP proxy to be used when communicating with the Stormpath API server (can be null)
      * @param authenticationScheme the HTTP authentication scheme to be used when communicating with the Stormpath API server.
      *                             If null, then Sauthc1 will be used.
      */
-    public HttpClientRequestExecutor(ClientCredentials clientCredentials, Proxy proxy, AuthenticationScheme<HttpAuthenticator<HttpMessage, ClientCredentials>> authenticationScheme, Integer connectionTimeout) {
+    public HttpClientRequestExecutor(ClientCredentials clientCredentials, Proxy proxy, AuthenticationScheme authenticationScheme, Integer connectionTimeout) {
         Assert.notNull(clientCredentials, "clientCredentials argument is required.");
         Assert.isTrue(connectionTimeout >= 0, "Timeout cannot be a negative number.");
-
+        Assert.notNull(authenticationScheme, "authenticationScheme argument is required.");
         this.clientCredentials = clientCredentials;
 
         this.requestAuthenticator = authenticationScheme.getAuthenticator();
