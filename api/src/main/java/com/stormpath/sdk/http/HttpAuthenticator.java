@@ -15,13 +15,24 @@
  */
 package com.stormpath.sdk.http;
 
+import com.stormpath.sdk.client.AuthenticationScheme;
 import com.stormpath.sdk.client.ClientCredentials;
 
 /**
+ * Genericized interface to be implemented by HTTP authentication schemes. Such scheme defines the way the communication with
+ * the Stormpath API server will be authenticated.
+ *
+ * @see ClientCredentials
+ * @see AuthenticationScheme
  * @since 1.0.0
  */
 public interface HttpAuthenticator<M extends HttpMessage, C extends ClientCredentials> {
 
+    /**
+     * Authenticates a http request.
+     * @param request HttpMessage to authenticate.
+     * @param clientCredentials ClientCredentials (e.g. ApiKey) to be used to authenticate the user's request.
+     */
     void authenticate(M request, C clientCredentials);
 
 }
