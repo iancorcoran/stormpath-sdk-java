@@ -17,9 +17,9 @@ package com.stormpath.sdk.impl.client
 
 import com.stormpath.sdk.api.ApiKey
 import com.stormpath.sdk.cache.CacheManager
-import com.stormpath.sdk.client.AuthenticationScheme
 import com.stormpath.sdk.client.Proxy
 import com.stormpath.sdk.ds.DataStore
+import com.stormpath.sdk.http.HttpAuthenticator
 import com.stormpath.sdk.impl.http.Request
 import com.stormpath.sdk.impl.http.RequestExecutor
 import com.stormpath.sdk.impl.http.Response
@@ -39,8 +39,8 @@ public class RequestCountingClient extends DefaultClient {
 
     private AtomicInteger count = new AtomicInteger();
 
-    public RequestCountingClient(ApiKey apiKey, String baseUrl, Proxy proxy, CacheManager cacheManager, AuthenticationScheme authenticationScheme, int connectionTimeout) {
-        super(apiKey, baseUrl, proxy, cacheManager, authenticationScheme, connectionTimeout)
+    public RequestCountingClient(ApiKey apiKey, String baseUrl, Proxy proxy, CacheManager cacheManager, HttpAuthenticator httpAuthenticator, int connectionTimeout) {
+        super(apiKey, baseUrl, proxy, cacheManager, httpAuthenticator, connectionTimeout)
     }
 
     @Override

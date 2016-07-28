@@ -36,8 +36,8 @@ import com.stormpath.sdk.impl.ds.ResourceFactory
 import com.stormpath.sdk.impl.http.Request
 import com.stormpath.sdk.impl.http.RequestExecutor
 import com.stormpath.sdk.impl.http.Response
-import com.stormpath.sdk.impl.http.authc.BasicAuthenticationScheme
-import com.stormpath.sdk.impl.http.authc.SAuthc1AuthenticationScheme
+import com.stormpath.sdk.impl.http.authc.BasicRequestAuthenticator
+import com.stormpath.sdk.impl.http.authc.SAuthc1RequestAuthenticator
 import com.stormpath.sdk.impl.http.support.DefaultRequest
 import com.stormpath.sdk.tenant.Tenant
 import org.apache.http.client.params.AllClientPNames
@@ -63,7 +63,7 @@ class DefaultClientTest {
         String baseUrl = "http://localhost:8080/v1"
         def proxy = createStrictMock(com.stormpath.sdk.client.Proxy)
         def cacheManager = createStrictMock(CacheManager)
-        def authcScheme = new SAuthc1AuthenticationScheme();
+        def authenticator = new SAuthc1RequestAuthenticator();
         def connectionTimeout = 990011
 
         expect(proxy.getHost()).andReturn("192.168.2.110")
@@ -72,7 +72,7 @@ class DefaultClientTest {
 
         replay(apiKey, proxy, cacheManager)
 
-        Client client = new DefaultClient(apiKey, baseUrl, proxy, cacheManager, authcScheme, connectionTimeout)
+        Client client = new DefaultClient(apiKey, baseUrl, proxy, cacheManager, authenticator, connectionTimeout)
 
         assertEquals(client.dataStore.requestExecutor.clientCredentials, apiKey)
         assertEquals(client.dataStore.requestExecutor.httpClient.getParams().getParameter(AllClientPNames.SO_TIMEOUT), connectionTimeout)
@@ -87,59 +87,25 @@ class DefaultClientTest {
         String baseUrl = "http://localhost:8080/v1"
         def proxy = createMock(com.stormpath.sdk.client.Proxy)
         def cacheManager = createMock(CacheManager)
-        def authcScheme = new SAuthc1AuthenticationScheme();
+        def authenticator = new SAuthc1RequestAuthenticator();
 
         try {
-            new DefaultClient(null, baseUrl, proxy, cacheManager, authcScheme, 10000)
+            new DefaultClient(null, baseUrl, proxy, cacheManager, authenticator, 10000)
             fail("Should have thrown due to null ApiKey")
         } catch (IllegalArgumentException ex) {
             assertEquals(ex.getMessage(), "apiKey argument cannot be null.")
         }
     }
 
-/*    @Test
-    // commenting out this test since the data store implementation changed and Integration Tests are passing with the changes
-    void testGetCurrentTenant() {
-
-        def apiKey = createStrictMock(ApiKey)
-        String baseUrl = "http://localhost:8080/v1"
-        def proxy = createStrictMock(com.stormpath.sdk.client.Proxy)
-        def cacheManager = createStrictMock(CacheManager)
-        def authcScheme = AuthenticationScheme.SAUTHC1
-        def cache = createStrictMock(Cache)
-        def map = createStrictMock(Map)
-        def set = createStrictMock(Set)
-        def iterator = createNiceMock(Iterator)
-        def currentTenantHref = "https://api.stormpath.com/v1/tenants/3cFOIsPgvKwsGjAeIiWV6d"
-
-        expect(proxy.getHost()).andReturn("192.168.2.110")
-        expect(proxy.getPort()).andReturn(777)
-        expect(proxy.isAuthenticationRequired()).andReturn(false)
-        expect(cacheManager.getCache("com.stormpath.sdk.tenant.Tenant")).andReturn(cache)
-        expect(cache.get("http://localhost:8080/v1/tenants/current")).andReturn(map)
-        expect(map.isEmpty()).andReturn(false).times(2)
-        expect(map.get("href")).andReturn(currentTenantHref).times(2)
-        expect(map.size()).andReturn(1)
-        expect(map.entrySet()).andReturn(set)
-        expect(set.iterator()).andReturn(iterator)
-
-        replay(apiKey, proxy, cacheManager, cache, map, set, iterator)
-
-        Client client = new DefaultClient(apiKey, baseUrl, proxy, cacheManager, authcScheme)
-        client.getCurrentTenant()
-
-        verify(apiKey, proxy, cacheManager, cache, map, set, iterator)
-    }*/
-
     @Test
     void testGetDataStore() {
 
         def apiKey = createNiceMock(ApiKey)
         String baseUrl = "http://localhost:8080/v1"
-        def authcScheme = new SAuthc1AuthenticationScheme()
+        def authenticator = new SAuthc1RequestAuthenticator()
         def cacheManager = Caches.newDisabledCacheManager();
 
-        Client client = new DefaultClient(apiKey, baseUrl, null, cacheManager , authcScheme, 20000)
+        Client client = new DefaultClient(apiKey, baseUrl, null, cacheManager , authenticator, 20000)
 
         assertNotNull(client.getDataStore())
         assertEquals(client.getDataStore().baseUrl, baseUrl)
@@ -207,7 +173,7 @@ class DefaultClientTest {
         replay requestExecutor, response, resourceFactory
 
         //Let's start
-        def client = new DefaultClient(apiKey, "https://api.stormpath.com/v1/accounts/", null, Caches.newDisabledCacheManager(), new BasicAuthenticationScheme(), 20000)
+        def client = new DefaultClient(apiKey, "https://api.stormpath.com/v1/accounts/", null, Caches.newDisabledCacheManager(), new BasicRequestAuthenticator(), 20000)
         setNewValue(client, "dataStore", dataStore)
         def account01 = client.getResource(properties.href, Account)
         def account02 = client.getResource(properties.href, Account)
@@ -345,7 +311,7 @@ class DefaultClientTest {
         replay(apiKey, dataStore, tenant, application, returnedApplication, createApplicationRequest, applicationList,
                 map, applicationCriteria, directory, returnedDir, createDirectoryRequest, directoryList, directoryCriteria, account)
 
-        Client client = new DefaultClient(apiKey, baseUrl, null, Caches.newDisabledCacheManager(), new BasicAuthenticationScheme(), 20000)
+        Client client = new DefaultClient(apiKey, baseUrl, null, Caches.newDisabledCacheManager(), new BasicRequestAuthenticator(), 20000)
         setNewValue(client, "dataStore", dataStore)
         assertSame(client.createApplication(application), returnedApplication)
         assertSame(client.createApplication(createApplicationRequest), returnedApplication)

@@ -24,7 +24,6 @@ import com.stormpath.sdk.application.ApplicationCriteria;
 import com.stormpath.sdk.application.ApplicationList;
 import com.stormpath.sdk.application.CreateApplicationRequest;
 import com.stormpath.sdk.cache.CacheManager;
-import com.stormpath.sdk.client.AuthenticationScheme;
 import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.client.ClientCredentials;
 import com.stormpath.sdk.client.Proxy;
@@ -35,11 +34,15 @@ import com.stormpath.sdk.directory.DirectoryList;
 import com.stormpath.sdk.ds.DataStore;
 import com.stormpath.sdk.group.GroupCriteria;
 import com.stormpath.sdk.group.GroupList;
+import com.stormpath.sdk.http.HttpAuthenticator;
 import com.stormpath.sdk.impl.ds.DefaultDataStore;
 import com.stormpath.sdk.impl.http.RequestExecutor;
 import com.stormpath.sdk.lang.Assert;
 import com.stormpath.sdk.lang.Classes;
-import com.stormpath.sdk.organization.*;
+import com.stormpath.sdk.organization.CreateOrganizationRequest;
+import com.stormpath.sdk.organization.Organization;
+import com.stormpath.sdk.organization.OrganizationCriteria;
+import com.stormpath.sdk.organization.OrganizationList;
 import com.stormpath.sdk.query.Options;
 import com.stormpath.sdk.resource.Resource;
 import com.stormpath.sdk.resource.ResourceException;
@@ -77,13 +80,13 @@ public class DefaultClient implements Client {
      *                             null)
      * @param cacheManager         the {@link com.stormpath.sdk.cache.CacheManager} that should be used to cache
      *                             Stormpath REST resources (can be null)
-     * @param authenticationScheme the HTTP authentication scheme to be used when communicating with the Stormpath API
+     * @param httpAuthenticator the HTTP authenticator to be used when communicating with the Stormpath API
      *                             server (can be null)
      */
-    public DefaultClient(ApiKey apiKey, String baseUrl, Proxy proxy, CacheManager cacheManager, AuthenticationScheme authenticationScheme, int connectionTimeout) {
+    public DefaultClient(ApiKey apiKey, String baseUrl, Proxy proxy, CacheManager cacheManager, HttpAuthenticator httpAuthenticator, int connectionTimeout) {
         Assert.notNull(apiKey, "apiKey argument cannot be null.");
         Assert.isTrue(connectionTimeout >= 0, "connectionTimeout cannot be a negative number.");
-        RequestExecutor requestExecutor = createRequestExecutor(apiKey, proxy, authenticationScheme, connectionTimeout);
+        RequestExecutor requestExecutor = createRequestExecutor(apiKey, proxy, httpAuthenticator, connectionTimeout);
         this.dataStore = createDataStore(requestExecutor, baseUrl, apiKey, cacheManager);
     }
 
@@ -118,7 +121,7 @@ public class DefaultClient implements Client {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private RequestExecutor createRequestExecutor(ApiKey apiKey, Proxy proxy, AuthenticationScheme authenticationScheme, int connectionTimeout) {
+    private RequestExecutor createRequestExecutor(ApiKey apiKey, Proxy proxy, HttpAuthenticator httpAuthenticator, int connectionTimeout) {
 
         String className = "com.stormpath.sdk.impl.http.httpclient.HttpClientRequestExecutor";
 
@@ -135,9 +138,9 @@ public class DefaultClient implements Client {
             throw new RuntimeException(msg);
         }
 
-        Constructor<RequestExecutor> ctor = Classes.getConstructor(requestExecutorClass, ClientCredentials.class, Proxy.class, AuthenticationScheme.class, Integer.class);
+        Constructor<RequestExecutor> ctor = Classes.getConstructor(requestExecutorClass, ClientCredentials.class, Proxy.class, HttpAuthenticator.class, Integer.class);
 
-        return Classes.instantiate(ctor, apiKey, proxy, authenticationScheme, connectionTimeout);
+        return Classes.instantiate(ctor, apiKey, proxy, httpAuthenticator, connectionTimeout);
     }
 
     // ========================================================================

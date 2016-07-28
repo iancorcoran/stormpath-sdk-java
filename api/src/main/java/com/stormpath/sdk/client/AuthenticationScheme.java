@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Stormpath, Inc.
+ * Copyright 2016 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 package com.stormpath.sdk.client;
 
-import com.stormpath.sdk.http.HttpAuthenticator;
-
 /**
  * Enumeration that defines the available HTTP authentication schemes to be used when communicating with the Stormpath API server.
  * </pre>
@@ -29,7 +27,7 @@ import com.stormpath.sdk.http.HttpAuthenticator;
  *
  * @since 0.9.3
  */
-public interface AuthenticationScheme <T extends HttpAuthenticator> {
-
-    T getAuthenticator();
+public enum AuthenticationScheme {
+    SAUTHC1,
+    BASIC
 }

@@ -15,7 +15,7 @@
  */
 package com.stormpath.sdk.client;
 
-import com.stormpath.sdk.authc.AuthenticationSchemeResolver;
+import com.stormpath.sdk.authc.AuthenticatorResolver;
 import com.stormpath.sdk.cache.CacheManager;
 
 /**
@@ -340,10 +340,14 @@ public interface ClientBuilder {
      * @param authenticationScheme the type of authentication to be used for communication with the Stormpath API server.
      * @return the ClientBuilder instance for method chaining
      */
-    @Deprecated
-    ClientBuilder setAuthenticationScheme(AuthenticationSchemes authenticationScheme);
+    ClientBuilder setAuthenticationScheme(AuthenticationScheme authenticationScheme);
 
-    ClientBuilder setAuthenticationSchemeResolver(AuthenticationSchemeResolver authenticationSchemeResolver);
+    /**
+     * TODO javadoc
+     * @param authenticatorResolver
+     * @return
+     */
+    ClientBuilder setAuthenticatorResolver(AuthenticatorResolver authenticatorResolver);
 
     /**
      * Sets both the timeout until a connection is established and the socket timeout (i.e. a maximum period of inactivity

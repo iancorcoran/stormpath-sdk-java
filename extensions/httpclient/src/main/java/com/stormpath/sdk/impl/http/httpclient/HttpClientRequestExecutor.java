@@ -15,31 +15,18 @@
  */
 package com.stormpath.sdk.impl.http.httpclient;
 
-import com.stormpath.sdk.client.AuthenticationScheme;
 import com.stormpath.sdk.client.ClientCredentials;
 import com.stormpath.sdk.client.Proxy;
 import com.stormpath.sdk.http.HttpAuthenticator;
 import com.stormpath.sdk.http.HttpHeaders;
 import com.stormpath.sdk.http.HttpMessage;
 import com.stormpath.sdk.http.MediaType;
-import com.stormpath.sdk.impl.http.QueryString;
-import com.stormpath.sdk.impl.http.Request;
-import com.stormpath.sdk.impl.http.RequestExecutor;
-import com.stormpath.sdk.impl.http.Response;
-import com.stormpath.sdk.impl.http.RestException;
+import com.stormpath.sdk.impl.http.*;
 import com.stormpath.sdk.impl.http.support.BackoffStrategy;
 import com.stormpath.sdk.impl.http.support.DefaultRequest;
 import com.stormpath.sdk.impl.http.support.DefaultResponse;
 import com.stormpath.sdk.lang.Assert;
-import org.apache.http.Header;
-import org.apache.http.HeaderElement;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.HttpVersion;
-import org.apache.http.NoHttpResponseException;
+import org.apache.http.*;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.entity.GzipDecompressingEntity;
@@ -138,16 +125,16 @@ public class HttpClientRequestExecutor implements RequestExecutor {
      * configuration.
      * @param clientCredentials the Stormpath account credentials that will be used to authenticate the client with Stormpath's API sever
      * @param proxy the HTTP proxy to be used when communicating with the Stormpath API server (can be null)
-     * @param authenticationScheme the HTTP authentication scheme to be used when communicating with the Stormpath API server.
+     * @param httpAuthenticator the HTTP authenticator to be used when communicating with the Stormpath API server.
      *                             If null, then Sauthc1 will be used.
      */
-    public HttpClientRequestExecutor(ClientCredentials clientCredentials, Proxy proxy, AuthenticationScheme authenticationScheme, Integer connectionTimeout) {
+    public HttpClientRequestExecutor(ClientCredentials clientCredentials, Proxy proxy, HttpAuthenticator httpAuthenticator, Integer connectionTimeout) {
         Assert.notNull(clientCredentials, "clientCredentials argument is required.");
         Assert.isTrue(connectionTimeout >= 0, "Timeout cannot be a negative number.");
-        Assert.notNull(authenticationScheme, "authenticationScheme argument is required.");
+        Assert.notNull(httpAuthenticator, "httpAuthenticator argument is required.");
         this.clientCredentials = clientCredentials;
 
-        this.requestAuthenticator = authenticationScheme.getAuthenticator();
+        this.requestAuthenticator = httpAuthenticator;
 
         this.httpClientRequestFactory = new HttpClientRequestFactory();
 
