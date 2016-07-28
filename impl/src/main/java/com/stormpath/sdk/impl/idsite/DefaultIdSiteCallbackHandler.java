@@ -15,8 +15,8 @@
  */
 package com.stormpath.sdk.impl.idsite;
 
-import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.application.Application;
+import com.stormpath.sdk.client.ClientCredentials;
 import com.stormpath.sdk.error.Error;
 import com.stormpath.sdk.error.jwt.InvalidJwtException;
 import com.stormpath.sdk.http.HttpMethod;
@@ -233,10 +233,10 @@ public class DefaultIdSiteCallbackHandler implements IdSiteCallbackHandler {
 
     private JwtSignatureValidator getJwtSignatureValidator(String jwtApiKeyId) {
 
-        ApiKey apiKey = dataStore.getApiKey();
+        ClientCredentials clientCredentials = dataStore.getClientCredentials();
 
-        if (apiKey.getId().equals(jwtApiKeyId)) {
-            return new JwtSignatureValidator(apiKey);
+        if (clientCredentials.getId().equals(jwtApiKeyId)) {
+            return new JwtSignatureValidator(clientCredentials);
         }
 
         throw new InvalidJwtException(InvalidJwtException.JWT_RESPONSE_INVALID_APIKEY_ID_ERROR);

@@ -733,7 +733,7 @@ public abstract class AbstractStormpathWebMvcConfiguration {
     }
 
     public String stormpathCsrfTokenSigningKey() {
-        return client.getApiKey().getSecret();
+        return client.getClientCredentials().getSecret();
     }
 
     public JwtAccountResolver stormpathJwtAccountResolver() {
