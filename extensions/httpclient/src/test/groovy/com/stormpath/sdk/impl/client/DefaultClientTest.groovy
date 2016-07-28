@@ -93,7 +93,7 @@ class DefaultClientTest {
             new DefaultClient(null, baseUrl, proxy, cacheManager, authenticator, 10000)
             fail("Should have thrown due to null ApiKey")
         } catch (IllegalArgumentException ex) {
-            assertEquals(ex.getMessage(), "apiKey argument cannot be null.")
+            assertEquals(ex.getMessage(), "clientCredentials argument cannot be null.")
         }
     }
 
