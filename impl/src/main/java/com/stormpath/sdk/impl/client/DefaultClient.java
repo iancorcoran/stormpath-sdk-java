@@ -106,8 +106,8 @@ public class DefaultClient implements Client {
     }
 
     @Override
-    public ApiKey getApiKey() {
-        return this.dataStore.getApiKey();
+    public ClientCredentials getClientCredentials() {
+        return this.dataStore.getClientCredentials();
     }
 
     @Override
