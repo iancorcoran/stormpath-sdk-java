@@ -22,17 +22,10 @@ import com.stormpath.sdk.cache.CacheConfigurationBuilder;
 import com.stormpath.sdk.cache.CacheManager;
 import com.stormpath.sdk.cache.CacheManagerBuilder;
 import com.stormpath.sdk.cache.Caches;
-import com.stormpath.sdk.client.ApiKey;
-import com.stormpath.sdk.client.AuthenticationScheme;
-import com.stormpath.sdk.client.Client;
-import com.stormpath.sdk.client.ClientBuilder;
-import com.stormpath.sdk.client.Proxy;
-import com.stormpath.sdk.impl.config.ClientConfiguration;
-import com.stormpath.sdk.impl.config.JSONPropertiesSource;
-import com.stormpath.sdk.impl.config.OptionalPropertiesSource;
-import com.stormpath.sdk.impl.config.PropertiesSource;
-import com.stormpath.sdk.impl.config.ResourcePropertiesSource;
-import com.stormpath.sdk.impl.config.YAMLPropertiesSource;
+import com.stormpath.sdk.client.*;
+import com.stormpath.sdk.http.HttpAuthenticator;
+import com.stormpath.sdk.impl.http.authc.DefaultAuthenticatorResolver;
+import com.stormpath.sdk.impl.config.*;
 import com.stormpath.sdk.impl.io.ClasspathResource;
 import com.stormpath.sdk.impl.io.DefaultResourceFactory;
 import com.stormpath.sdk.impl.io.Resource;
@@ -53,16 +46,16 @@ import java.util.concurrent.TimeUnit;
  * <p>The default {@link ClientBuilder} implementation. This looks for configuration files
  * in the following locations and order of precedence (last one wins).</p>
  * <ul>
- *     <li>classpath:com/stormpath/sdk/config/stormpath.properties</li>
- *     <li>classpath:stormpath.properties</li>
- *     <li>classpath:stormpath.json</li>
- *     <li>classpath:stormpath.yaml</li>
- *     <li>~/.stormpath/stormpath.properties</li>
- *     <li>~/.stormpath/stormpath.json</li>
- *     <li>~/.stormpath/stormpath.yaml</li>
- *     <li>~/stormpath.properties</li>
- *     <li>~/stormpath.json</li>
- *     <li>~/stormpath.yaml</li>
+ * <li>classpath:com/stormpath/sdk/config/stormpath.properties</li>
+ * <li>classpath:stormpath.properties</li>
+ * <li>classpath:stormpath.json</li>
+ * <li>classpath:stormpath.yaml</li>
+ * <li>~/.stormpath/stormpath.properties</li>
+ * <li>~/.stormpath/stormpath.json</li>
+ * <li>~/.stormpath/stormpath.yaml</li>
+ * <li>~/stormpath.properties</li>
+ * <li>~/stormpath.json</li>
+ * <li>~/stormpath.yaml</li>
  * </ul>
  *
  * @since 1.0.alpha

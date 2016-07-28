@@ -133,7 +133,7 @@ public class ClientsTest {
 
         Client client = Clients.builder()
                 .setApiKey(apiKey)
-                .setAuthenticationScheme(AuthenticationSchemes.BASIC)
+                .setAuthenticationScheme(AuthenticationScheme.BASIC)
                 .build()
 
         def authenticationScheme = client.dataStore.requestExecutor.requestAuthenticator
@@ -142,7 +142,7 @@ public class ClientsTest {
 
         client = Clients.builder()
                 .setApiKey(apiKey)
-                .setAuthenticationScheme(AuthenticationSchemes.SAUTHC1)
+                .setAuthenticationScheme(AuthenticationScheme.SAUTHC1)
                 .build()
 
         authenticationScheme = client.dataStore.requestExecutor.requestAuthenticator
