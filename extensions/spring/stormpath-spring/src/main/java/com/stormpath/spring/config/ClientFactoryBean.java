@@ -16,6 +16,7 @@
 package com.stormpath.spring.config;
 
 import com.stormpath.sdk.api.ApiKey;
+import com.stormpath.sdk.authc.AuthenticatorResolver;
 import com.stormpath.sdk.cache.CacheManager;
 import com.stormpath.sdk.client.*;
 import com.stormpath.spring.cache.SpringCacheManager;
@@ -87,8 +88,16 @@ public class ClientFactoryBean extends AbstractFactoryBean<Client> {
      * @param authenticationScheme the type of authentication to be used for communication with the Stormpath API
      *                             server.
      */
-    public void setAuthenticationScheme(AuthenticationSchemes authenticationScheme) {
+    public void setAuthenticationScheme(AuthenticationScheme authenticationScheme) {
         builder.setAuthenticationScheme(authenticationScheme);
+    }
+
+    /**
+     * TODO javadoc
+     * @param authenticatorResolver
+     */
+    public void setAuthenticatorResolver(AuthenticatorResolver authenticatorResolver){
+        builder.setAuthenticatorResolver(authenticatorResolver);
     }
 
     /**

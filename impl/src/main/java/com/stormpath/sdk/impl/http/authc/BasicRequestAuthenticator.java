@@ -16,6 +16,8 @@
 package com.stormpath.sdk.impl.http.authc;
 
 import com.stormpath.sdk.api.ApiKey;
+import com.stormpath.sdk.authc.AuthenticatorResolver;
+import com.stormpath.sdk.client.AuthenticationScheme;
 import com.stormpath.sdk.impl.http.Request;
 import com.stormpath.sdk.impl.http.support.RequestAuthenticationException;
 import com.stormpath.sdk.impl.util.Base64;
@@ -32,7 +34,8 @@ import java.util.SimpleTimeZone;
  * Basic Authentication</a> scheme. This defines the HTTP authentication scheme to be used when communicating with the Stormpath API server.
  * </pre>
  * The `Client` gets the request authenticator configured via
- * {@link com.stormpath.sdk.client.ClientBuilder#setAuthenticationScheme(com.stormpath.sdk.client.AuthenticationScheme)}
+ * {@link com.stormpath.sdk.client.ClientBuilder#setAuthenticationScheme(AuthenticationScheme)} or
+ * {@link com.stormpath.sdk.client.ClientBuilder#setAuthenticatorResolver(AuthenticatorResolver)}
  *
  * @since 0.9.3
  */

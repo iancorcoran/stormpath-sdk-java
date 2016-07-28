@@ -1,8 +1,8 @@
 package com.stormpath.sdk.impl.config;
 
-import com.stormpath.sdk.authc.AuthenticationSchemeResolver;
+import com.stormpath.sdk.authc.AuthenticatorResolver;
 import com.stormpath.sdk.cache.CacheConfigurationBuilder;
-import com.stormpath.sdk.client.AuthenticationSchemes;
+import com.stormpath.sdk.client.AuthenticationScheme;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -27,8 +27,8 @@ public class ClientConfiguration {
     private Map<String, CacheConfigurationBuilder> cacheManagerCaches = new LinkedHashMap<>();
     private String baseUrl;
     private int connectionTimeout;
-    private AuthenticationSchemes authenticationScheme;
-    private AuthenticationSchemeResolver authenticationSchemeResolver;
+    private AuthenticationScheme authenticationScheme;
+    private AuthenticatorResolver authenticatorResolver;
     private int proxyPort;
     private String proxyHost;
     private String proxyUsername;
@@ -58,20 +58,20 @@ public class ClientConfiguration {
         this.apiKeySecret = apiKeySecret;
     }
 
-    public AuthenticationSchemes getAuthenticationScheme() {
+    public AuthenticationScheme getAuthenticationScheme() {
         return authenticationScheme;
     }
 
-    public void setAuthenticationScheme(AuthenticationSchemes authenticationScheme) {
+    public void setAuthenticationScheme(AuthenticationScheme authenticationScheme) {
         this.authenticationScheme = authenticationScheme;
     }
 
-    public AuthenticationSchemeResolver getAuthenticationSchemeResolver() {
-        return authenticationSchemeResolver;
+    public AuthenticatorResolver getAuthenticatorResolver() {
+        return authenticatorResolver;
     }
 
-    public void setAuthenticationSchemeResolver(AuthenticationSchemeResolver authenticationSchemeResolver) {
-        this.authenticationSchemeResolver = authenticationSchemeResolver;
+    public void setAuthenticatorResolver(AuthenticatorResolver authenticatorResolver) {
+        this.authenticatorResolver = authenticatorResolver;
     }
 
     public String getBaseUrl() {

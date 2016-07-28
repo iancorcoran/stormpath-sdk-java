@@ -22,6 +22,7 @@ import com.stormpath.sdk.cache.Caches
 import com.stormpath.sdk.directory.Directory
 import com.stormpath.sdk.impl.client.DefaultClientBuilder
 import com.stormpath.sdk.impl.client.RequestCountingClient
+import com.stormpath.sdk.impl.http.authc.SAuthc1RequestAuthenticator
 import com.stormpath.sdk.resource.Deletable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -101,7 +102,7 @@ abstract class ClientIT {
 
         com.stormpath.sdk.api.ApiKey apiKey = com.stormpath.sdk.api.ApiKeys.builder().build();
 
-        return new RequestCountingClient(apiKey, baseUrl, null, Caches.newCacheManager().build(), AuthenticationScheme.SAUTHC1, 20000);
+        return new RequestCountingClient(apiKey, baseUrl, null, Caches.newCacheManager().build(), new SAuthc1RequestAuthenticator(), 20000);
     }
 
     //Creates a new Application with an auto-created directory

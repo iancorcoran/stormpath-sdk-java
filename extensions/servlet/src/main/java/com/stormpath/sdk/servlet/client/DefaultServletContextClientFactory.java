@@ -170,7 +170,7 @@ public class DefaultServletContextClientFactory implements ServletContextClientF
     protected void applyAuthenticationScheme(ClientBuilder builder) {
         String schemeName = config.get(STORMPATH_AUTHENTICATION_SCHEME);
         if (Strings.hasText(schemeName)) {
-            AuthenticationSchemes scheme = AuthenticationSchemes.valueOf(schemeName.toUpperCase());
+            AuthenticationScheme scheme = AuthenticationScheme.valueOf(schemeName.toUpperCase());
             builder.setAuthenticationScheme(scheme);
         }
     }
