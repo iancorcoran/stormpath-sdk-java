@@ -224,11 +224,11 @@ public class IdSiteResultController extends AbstractController {
         JwtBuilder jwtBuilder = Jwts.builder()
                 .setSubject(account.getHref())
                 .setIssuer(application.getHref())
-                .setAudience(client.getApiKey().getId())
+                .setAudience(client.getClientCredentials().getId())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + (1000 * 60)))
                 .claim("status", "AUTHENTICATED");
-        String secret = client.getApiKey().getSecret();
+        String secret = client.getClientCredentials().getSecret();
         String token = jwtBuilder.signWith(SignatureAlgorithm.HS512, secret.getBytes(Charset.forName("UTF-8"))).compact();
 
         IdSiteAuthenticationRequest idSiteRequest = OAuthRequests.IDSITE_AUTHENTICATION_REQUEST.builder().setToken(token).build();

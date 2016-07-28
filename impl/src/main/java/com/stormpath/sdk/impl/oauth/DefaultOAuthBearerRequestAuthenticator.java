@@ -61,7 +61,7 @@ public class DefaultOAuthBearerRequestAuthenticator extends AbstractOAuthRequest
         OAuthBearerRequestAuthentication bearerRequest = (OAuthBearerRequestAuthentication) authenticationRequest;
 
         if (this.isLocalValidation) {
-            String apiKeySecret = dataStore.getApiKey().getSecret();
+            String apiKeySecret = dataStore.getClientCredentials().getSecret();
             try {
 
                 // During parsing, the JWT is validated for expiration, signature and tampering
