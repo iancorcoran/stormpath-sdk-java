@@ -16,7 +16,7 @@
 package com.stormpath.sdk.client;
 
 /**
- * Enumeration that defines the available HTTP authentication schemes to be used when communicating with the Stormpath API server.
+ * Defines the available HTTP authentication schemes to be used when communicating with the Stormpath API server.
  * </pre>
  * The Authentication Scheme setting is helpful in cases where the code is run in a platform where the header information for
  * outgoing HTTP requests is modified and thus causing communication issues. For example, for Google App Engine you
@@ -27,7 +27,7 @@ package com.stormpath.sdk.client;
  *
  * @since 0.9.3
  */
-public enum AuthenticationScheme {
-    SAUTHC1,
-    BASIC
+public class AuthenticationScheme {
+    public static final String SAUTHC1 = "SAUTHC1";
+    public static final String BASIC = "BASIC";
 }

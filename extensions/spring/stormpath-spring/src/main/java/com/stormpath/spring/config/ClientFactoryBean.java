@@ -88,7 +88,7 @@ public class ClientFactoryBean extends AbstractFactoryBean<Client> {
      * @param authenticationScheme the type of authentication to be used for communication with the Stormpath API
      *                             server.
      */
-    public void setAuthenticationScheme(AuthenticationScheme authenticationScheme) {
+    public void setAuthenticationScheme(String authenticationScheme) {
         builder.setAuthenticationScheme(authenticationScheme);
     }
 

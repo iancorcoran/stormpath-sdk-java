@@ -340,7 +340,7 @@ public interface ClientBuilder {
      * @param authenticationScheme the type of authentication to be used for communication with the Stormpath API server.
      * @return the ClientBuilder instance for method chaining
      */
-    ClientBuilder setAuthenticationScheme(AuthenticationScheme authenticationScheme);
+    ClientBuilder setAuthenticationScheme(String authenticationScheme);
 
     /**
      * TODO javadoc

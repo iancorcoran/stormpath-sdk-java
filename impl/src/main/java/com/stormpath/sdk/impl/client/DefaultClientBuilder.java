@@ -169,7 +169,7 @@ public class DefaultClientBuilder implements ClientBuilder {
         }
 
         if (props.get(DEFAULT_CLIENT_AUTHENTICATION_SCHEME_PROPERTY_NAME) != null) {
-            clientConfig.setAuthenticationScheme(Enum.valueOf(AuthenticationScheme.class, props.get(DEFAULT_CLIENT_AUTHENTICATION_SCHEME_PROPERTY_NAME)));
+            clientConfig.setAuthenticationScheme(props.get(DEFAULT_CLIENT_AUTHENTICATION_SCHEME_PROPERTY_NAME));
         }
 
         if (props.get(DEFAULT_CLIENT_PROXY_PORT_PROPERTY_NAME) != null) {
@@ -217,7 +217,7 @@ public class DefaultClientBuilder implements ClientBuilder {
     }
 
     @Override
-    public ClientBuilder setAuthenticationScheme(AuthenticationScheme authenticationScheme) {
+    public ClientBuilder setAuthenticationScheme(String authenticationScheme) {
         this.clientConfig.setAuthenticationScheme(authenticationScheme);
         return this;
     }
