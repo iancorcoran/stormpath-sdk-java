@@ -17,8 +17,10 @@ package com.stormpath.sdk.impl.http.httpclient;
 
 import com.stormpath.sdk.client.ClientCredentials;
 import com.stormpath.sdk.client.Proxy;
+import com.stormpath.sdk.http.HttpAuthenticator;
 import com.stormpath.sdk.http.HttpHeaders;
 import com.stormpath.sdk.http.MediaType;
+import com.stormpath.sdk.http.HttpMessage;
 import com.stormpath.sdk.impl.http.*;
 import com.stormpath.sdk.impl.http.support.BackoffStrategy;
 import com.stormpath.sdk.impl.http.support.DefaultRequest;
