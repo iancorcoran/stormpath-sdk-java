@@ -72,7 +72,7 @@ public class DefaultClient implements Client {
      * Instantiates a new Client instance that will communicate with the Stormpath REST API.  See the class-level
      * JavaDoc for a usage example.
      *
-     * @param apiKey               the Stormpath account API Key that will be used to authenticate the client with
+     * @param clientCredentials    the Stormpath account credentials that will be used to authenticate the client with
      *                             Stormpath's API server
      * @param baseUrl              the Stormpath base URL
      * @param proxy                the HTTP proxy to be used when communicating with the Stormpath API server (can be
@@ -82,15 +82,15 @@ public class DefaultClient implements Client {
      * @param httpAuthenticator the HTTP authenticator to be used when communicating with the Stormpath API
      *                             server (can be null)
      */
-    public DefaultClient(ApiKey apiKey, String baseUrl, Proxy proxy, CacheManager cacheManager, HttpAuthenticator httpAuthenticator, int connectionTimeout) {
-        Assert.notNull(apiKey, "apiKey argument cannot be null.");
+    public DefaultClient(ClientCredentials clientCredentials, String baseUrl, Proxy proxy, CacheManager cacheManager, HttpAuthenticator httpAuthenticator, int connectionTimeout) {
+        Assert.notNull(clientCredentials, "clientCredentials argument cannot be null.");
         Assert.isTrue(connectionTimeout >= 0, "connectionTimeout cannot be a negative number.");
-        RequestExecutor requestExecutor = createRequestExecutor(apiKey, proxy, httpAuthenticator, connectionTimeout);
-        this.dataStore = createDataStore(requestExecutor, baseUrl, apiKey, cacheManager);
+        RequestExecutor requestExecutor = createRequestExecutor(clientCredentials, proxy, httpAuthenticator, connectionTimeout);
+        this.dataStore = createDataStore(requestExecutor, baseUrl, clientCredentials, cacheManager);
     }
 
-    protected DataStore createDataStore(RequestExecutor requestExecutor, String baseUrl, ApiKey apiKey, CacheManager cacheManager) {
-        return new DefaultDataStore(requestExecutor, baseUrl, apiKey, cacheManager);
+    protected DataStore createDataStore(RequestExecutor requestExecutor, String baseUrl, ClientCredentials clientCredentials, CacheManager cacheManager) {
+        return new DefaultDataStore(requestExecutor, baseUrl, clientCredentials, cacheManager);
     }
 
     @Override
@@ -120,7 +120,7 @@ public class DefaultClient implements Client {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private RequestExecutor createRequestExecutor(ApiKey apiKey, Proxy proxy, HttpAuthenticator httpAuthenticator, int connectionTimeout) {
+    private RequestExecutor createRequestExecutor(ClientCredentials clientCredentials, Proxy proxy, HttpAuthenticator httpAuthenticator, int connectionTimeout) {
 
         String className = "com.stormpath.sdk.impl.http.httpclient.HttpClientRequestExecutor";
 
@@ -139,7 +139,7 @@ public class DefaultClient implements Client {
 
         Constructor<RequestExecutor> ctor = Classes.getConstructor(requestExecutorClass, ClientCredentials.class, Proxy.class, HttpAuthenticator.class, Integer.class);
 
-        return Classes.instantiate(ctor, apiKey, proxy, httpAuthenticator, connectionTimeout);
+        return Classes.instantiate(ctor, clientCredentials, proxy, httpAuthenticator, connectionTimeout);
     }
 
     // ========================================================================
