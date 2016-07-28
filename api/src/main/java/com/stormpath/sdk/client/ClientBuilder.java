@@ -343,9 +343,9 @@ public interface ClientBuilder {
     ClientBuilder setAuthenticationScheme(String authenticationScheme);
 
     /**
-     * TODO javadoc
-     * @param authenticatorResolver
-     * @return
+     * Overrides the default authenticator resolver. It is not recommended that you override this setting.
+     * @param authenticatorResolver the resolver for the authenticator to be used for communication with the Stormpath API server.
+     * @return the ClientBuilder instance for method chaining
      */
     ClientBuilder setAuthenticatorResolver(AuthenticatorResolver authenticatorResolver);
 

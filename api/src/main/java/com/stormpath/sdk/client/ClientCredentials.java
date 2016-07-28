@@ -25,7 +25,7 @@ public interface ClientCredentials {
     String getId();
 
     /**
-     * Returns the ApiKey plaintext secret - a very secret, very private value that should never be disclosed to anyone
+     * Returns the Client Credentials plaintext secret - a very secret, very private value that should never be disclosed to anyone
      * other than the actual account holder.  The secret value is mostly used for computing HMAC digests, but can also
      * be used as a password for password-based key derivation and encryption.
      *
@@ -36,7 +36,7 @@ public interface ClientCredentials {
      * Please use this method with caution and only when necessary to ensure your API users' secrets remain
      * secure.
      *
-     * @return the ApiKey plaintext secret
+     * @return the ClientCredentials plaintext secret
      */
     String getSecret();
 }
