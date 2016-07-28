@@ -2,7 +2,6 @@ package com.stormpath.sdk.impl.config;
 
 import com.stormpath.sdk.authc.AuthenticatorResolver;
 import com.stormpath.sdk.cache.CacheConfigurationBuilder;
-import com.stormpath.sdk.client.AuthenticationScheme;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -27,7 +26,7 @@ public class ClientConfiguration {
     private Map<String, CacheConfigurationBuilder> cacheManagerCaches = new LinkedHashMap<>();
     private String baseUrl;
     private int connectionTimeout;
-    private AuthenticationScheme authenticationScheme;
+    private String authenticationScheme;
     private AuthenticatorResolver authenticatorResolver;
     private int proxyPort;
     private String proxyHost;
@@ -58,11 +57,11 @@ public class ClientConfiguration {
         this.apiKeySecret = apiKeySecret;
     }
 
-    public AuthenticationScheme getAuthenticationScheme() {
+    public String getAuthenticationScheme() {
         return authenticationScheme;
     }
 
-    public void setAuthenticationScheme(AuthenticationScheme authenticationScheme) {
+    public void setAuthenticationScheme(String authenticationScheme) {
         this.authenticationScheme = authenticationScheme;
     }
 

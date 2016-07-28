@@ -9,17 +9,17 @@ import com.stormpath.sdk.http.HttpAuthenticator;
 
 public class DefaultAuthenticatorResolver implements AuthenticatorResolver {
     @Override
-    public HttpAuthenticator resolveAuthenticator(AuthenticationScheme authenticationScheme) {
-        if (authenticationScheme == null) {
+    public HttpAuthenticator resolveAuthenticator(String authenticationScheme) {
+        if (authenticationScheme == null || authenticationScheme.isEmpty()) {
             authenticationScheme = AuthenticationScheme.SAUTHC1;
         }
 
-        switch (authenticationScheme) {
-            case BASIC:
-                return new BasicRequestAuthenticator();
-            case SAUTHC1:
-            default:
-                return new SAuthc1RequestAuthenticator();
+        if (authenticationScheme.equalsIgnoreCase(AuthenticationScheme.SAUTHC1)) {
+            return new SAuthc1RequestAuthenticator();
+        } else if (authenticationScheme.equalsIgnoreCase(AuthenticationScheme.BASIC)) {
+            return new BasicRequestAuthenticator();
+        } else {
+            throw new IllegalArgumentException("Invalid authentication scheme: " + authenticationScheme + " specified.");
         }
     }
 }

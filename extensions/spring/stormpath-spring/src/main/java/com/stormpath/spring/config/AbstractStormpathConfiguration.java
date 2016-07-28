@@ -84,7 +84,7 @@ public abstract class AbstractStormpathConfiguration {
     protected int connectionTimeout;
 
     @Value("#{ @environment['stormpath.client.authenticationScheme'] }")
-    protected AuthenticationScheme authenticationScheme;
+    protected String authenticationScheme;
 
     public ApiKey stormpathClientApiKey() {
 
