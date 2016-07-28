@@ -1,21 +1,17 @@
 package com.stormpath.sdk.impl.http.httpclient
 
 import com.stormpath.sdk.account.Account
-import com.stormpath.sdk.client.AuthenticationScheme
 import com.stormpath.sdk.client.ClientIT
 import com.stormpath.sdk.http.HttpMethod
 import com.stormpath.sdk.impl.http.Response
+import com.stormpath.sdk.impl.http.authc.SAuthc1RequestAuthenticator
 import com.stormpath.sdk.impl.http.support.DefaultRequest
 import com.stormpath.sdk.oauth.Authenticators
-import com.stormpath.sdk.oauth.OAuthRequests
 import com.stormpath.sdk.oauth.OAuthPasswordGrantRequestAuthentication
+import com.stormpath.sdk.oauth.OAuthRequests
 import org.testng.annotations.Test
 
-import java.util.concurrent.Callable
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import java.util.concurrent.Future
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.*
 
 import static org.testng.Assert.assertEquals
 import static org.testng.Assert.assertNotNull
@@ -51,7 +47,7 @@ class HttpClientRequestExecutorIT extends ClientIT {
         // this proves that we are *not* waiting on redirects
         def verifyUri = app.getHref() + "/authTokens/" + result.getAccessTokenString()
 
-        def httpClientRequestExecutor = new HttpClientRequestExecutor(client.getApiKey(), null, AuthenticationScheme.SAUTHC1, 2000)
+        def httpClientRequestExecutor = new HttpClientRequestExecutor(client.getApiKey(), null, new SAuthc1RequestAuthenticator(), 2000)
         httpClientRequestExecutor.setNumRetries(0)
 
         Callable<Response> callable = new Callable<Response>() {

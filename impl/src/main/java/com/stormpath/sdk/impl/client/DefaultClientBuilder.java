@@ -17,14 +17,15 @@ package com.stormpath.sdk.impl.client;
 
 import com.stormpath.sdk.api.ApiKeyBuilder;
 import com.stormpath.sdk.api.ApiKeys;
-import com.stormpath.sdk.authc.AuthenticationSchemeResolver;
+import com.stormpath.sdk.authc.AuthenticatorResolver;
 import com.stormpath.sdk.cache.CacheConfigurationBuilder;
 import com.stormpath.sdk.cache.CacheManager;
 import com.stormpath.sdk.cache.CacheManagerBuilder;
 import com.stormpath.sdk.cache.Caches;
 import com.stormpath.sdk.client.*;
+import com.stormpath.sdk.http.HttpAuthenticator;
+import com.stormpath.sdk.impl.http.authc.DefaultAuthenticatorResolver;
 import com.stormpath.sdk.impl.config.*;
-import com.stormpath.sdk.impl.http.authc.DefaultAuthenticationSchemeResolver;
 import com.stormpath.sdk.impl.io.ClasspathResource;
 import com.stormpath.sdk.impl.io.DefaultResourceFactory;
 import com.stormpath.sdk.impl.io.Resource;
@@ -168,7 +169,7 @@ public class DefaultClientBuilder implements ClientBuilder {
         }
 
         if (props.get(DEFAULT_CLIENT_AUTHENTICATION_SCHEME_PROPERTY_NAME) != null) {
-            clientConfig.setAuthenticationScheme(Enum.valueOf(AuthenticationSchemes.class, props.get(DEFAULT_CLIENT_AUTHENTICATION_SCHEME_PROPERTY_NAME)));
+            clientConfig.setAuthenticationScheme(Enum.valueOf(AuthenticationScheme.class, props.get(DEFAULT_CLIENT_AUTHENTICATION_SCHEME_PROPERTY_NAME)));
         }
 
         if (props.get(DEFAULT_CLIENT_PROXY_PORT_PROPERTY_NAME) != null) {
@@ -216,14 +217,14 @@ public class DefaultClientBuilder implements ClientBuilder {
     }
 
     @Override
-    public ClientBuilder setAuthenticationScheme(AuthenticationSchemes authenticationScheme) {
+    public ClientBuilder setAuthenticationScheme(AuthenticationScheme authenticationScheme) {
         this.clientConfig.setAuthenticationScheme(authenticationScheme);
         return this;
     }
 
     @Override
-    public ClientBuilder setAuthenticationSchemeResolver(AuthenticationSchemeResolver authenticationSchemeResolver) {
-        this.clientConfig.setAuthenticationSchemeResolver(authenticationSchemeResolver);
+    public ClientBuilder setAuthenticatorResolver(AuthenticatorResolver authenticatorResolver) {
+        this.clientConfig.setAuthenticatorResolver(authenticatorResolver);
         return this;
     }
 
@@ -287,16 +288,16 @@ public class DefaultClientBuilder implements ClientBuilder {
                     this.clientConfig.getProxyUsername(), this.clientConfig.getProxyPassword());
         }
 
-        AuthenticationSchemeResolver authenticationSchemeResolver;
+        AuthenticatorResolver authenticatorResolver;
 
-        authenticationSchemeResolver = (this.clientConfig.getAuthenticationSchemeResolver() == null)
-                ? new DefaultAuthenticationSchemeResolver()
-                : this.clientConfig.getAuthenticationSchemeResolver();
+        authenticatorResolver = (this.clientConfig.getAuthenticatorResolver() == null)
+                ? new DefaultAuthenticatorResolver()
+                : this.clientConfig.getAuthenticatorResolver();
 
-        AuthenticationScheme authenticationScheme = authenticationSchemeResolver.resolveAuthenticationScheme(this.clientConfig.getAuthenticationScheme());
+        HttpAuthenticator authenticator = authenticatorResolver.resolveAuthenticator(this.clientConfig.getAuthenticationScheme());
 
         return new DefaultClient(this.apiKey, this.clientConfig.getBaseUrl(), this.proxy, this.cacheManager,
-                authenticationScheme, this.clientConfig.getConnectionTimeout());
+                authenticator, this.clientConfig.getConnectionTimeout());
     }
 
     @Override
