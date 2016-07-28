@@ -7,6 +7,14 @@ import com.stormpath.sdk.authc.AuthenticatorResolver;
 import com.stormpath.sdk.client.AuthenticationScheme;
 import com.stormpath.sdk.http.HttpAuthenticator;
 
+/**
+ * Default implementation of {@link AuthenticatorResolver}
+ *
+ * Supports authentication schemes of SAUTHC1 and BASIC as defined by {@link AuthenticationScheme}.
+ * Defaults to SAUTHC1 if supplied authentication is null/empty.
+ *
+ * @since 1.0.0
+ */
 public class DefaultAuthenticatorResolver implements AuthenticatorResolver {
     @Override
     public HttpAuthenticator resolveAuthenticator(String authenticationScheme) {
