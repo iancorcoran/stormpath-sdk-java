@@ -107,7 +107,7 @@ public class ClientsTest {
                 .setApiKey(apiKey)
                 .build()
 
-        def requestAuthenticator = client.dataStore.requestExecutor.requestAuthenticator
+        def requestAuthenticator = client.dataStore.requestExecutor.authenticationScheme
 
         assertTrue requestAuthenticator instanceof SAuthc1RequestAuthenticator
     }
@@ -122,7 +122,7 @@ public class ClientsTest {
                 .setAuthenticationScheme(null)
                 .build()
 
-        def requestAuthenticator = client.dataStore.requestExecutor.requestAuthenticator
+        def requestAuthenticator = client.dataStore.requestExecutor.authenticationScheme
 
         assertTrue requestAuthenticator instanceof SAuthc1RequestAuthenticator
     }
@@ -134,19 +134,19 @@ public class ClientsTest {
 
         Client client = Clients.builder()
                 .setApiKey(apiKey)
-                .setAuthenticationScheme(AuthenticationScheme.BASIC)
+                .setAuthenticationScheme(new BasicRequestAuthenticator())
                 .build()
 
-        def authenticationScheme = client.dataStore.requestExecutor.requestAuthenticator
+        def authenticationScheme = client.dataStore.requestExecutor.authenticationScheme
 
         assertTrue authenticationScheme instanceof BasicRequestAuthenticator
 
         client = Clients.builder()
                 .setApiKey(apiKey)
-                .setAuthenticationScheme(AuthenticationScheme.SAUTHC1)
+                .setAuthenticationScheme(new SAuthc1RequestAuthenticator())
                 .build()
 
-        authenticationScheme = client.dataStore.requestExecutor.requestAuthenticator
+        authenticationScheme = client.dataStore.requestExecutor.authenticationScheme
 
         assertTrue authenticationScheme instanceof SAuthc1RequestAuthenticator
     }

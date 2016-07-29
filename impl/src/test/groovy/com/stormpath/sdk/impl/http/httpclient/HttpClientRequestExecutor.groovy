@@ -18,9 +18,9 @@ package com.stormpath.sdk.impl.http.httpclient
 import com.stormpath.sdk.api.ApiKey
 import com.stormpath.sdk.client.AuthenticationScheme
 import com.stormpath.sdk.client.Proxy
-import com.stormpath.sdk.impl.http.Request
+import com.stormpath.sdk.http.Request
 import com.stormpath.sdk.impl.http.RequestExecutor
-import com.stormpath.sdk.impl.http.Response
+import com.stormpath.sdk.http.Response
 import com.stormpath.sdk.impl.http.RestException
 
 /**

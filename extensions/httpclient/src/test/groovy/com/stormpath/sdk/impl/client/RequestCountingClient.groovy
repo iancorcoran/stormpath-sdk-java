@@ -20,9 +20,9 @@ import com.stormpath.sdk.cache.CacheManager
 import com.stormpath.sdk.client.AuthenticationScheme
 import com.stormpath.sdk.client.Proxy
 import com.stormpath.sdk.ds.DataStore
-import com.stormpath.sdk.impl.http.Request
+import com.stormpath.sdk.http.Request
 import com.stormpath.sdk.impl.http.RequestExecutor
-import com.stormpath.sdk.impl.http.Response
+import com.stormpath.sdk.http.Response
 import com.stormpath.sdk.impl.http.RestException
 
 import java.util.concurrent.atomic.AtomicInteger

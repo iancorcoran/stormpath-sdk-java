@@ -18,29 +18,15 @@ package com.stormpath.sdk.impl.http.httpclient;
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.client.AuthenticationScheme;
 import com.stormpath.sdk.client.Proxy;
-import com.stormpath.sdk.impl.http.HttpHeaders;
-import com.stormpath.sdk.impl.http.MediaType;
-import com.stormpath.sdk.impl.http.QueryString;
-import com.stormpath.sdk.impl.http.Request;
+import com.stormpath.sdk.http.HttpHeaders;
+import com.stormpath.sdk.http.*;
 import com.stormpath.sdk.impl.http.RequestExecutor;
-import com.stormpath.sdk.impl.http.Response;
 import com.stormpath.sdk.impl.http.RestException;
-import com.stormpath.sdk.impl.http.authc.DefaultRequestAuthenticatorFactory;
-import com.stormpath.sdk.impl.http.authc.RequestAuthenticator;
-import com.stormpath.sdk.impl.http.authc.RequestAuthenticatorFactory;
 import com.stormpath.sdk.impl.http.support.BackoffStrategy;
 import com.stormpath.sdk.impl.http.support.DefaultRequest;
 import com.stormpath.sdk.impl.http.support.DefaultResponse;
 import com.stormpath.sdk.lang.Assert;
-import org.apache.http.Header;
-import org.apache.http.HeaderElement;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.HttpVersion;
-import org.apache.http.NoHttpResponseException;
+import org.apache.http.*;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.entity.GzipDecompressingEntity;
@@ -93,15 +79,12 @@ public class HttpClientRequestExecutor implements RequestExecutor {
 
     private final ApiKey apiKey;
 
-    private final RequestAuthenticator requestAuthenticator;
-
+    private final AuthenticationScheme authenticationScheme;
     private DefaultHttpClient httpClient;
 
     private BackoffStrategy backoffStrategy;
 
     private HttpClientRequestFactory httpClientRequestFactory;
-
-    private final RequestAuthenticatorFactory requestAuthenticatorFactory = new DefaultRequestAuthenticatorFactory();
 
     //doesn't need to be SecureRandom: only used in backoff strategy, not for crypto:
     private final Random random = new Random();
@@ -149,8 +132,8 @@ public class HttpClientRequestExecutor implements RequestExecutor {
         Assert.isTrue(connectionTimeout >= 0, "Timeout cannot be a negative number.");
 
         this.apiKey = apiKey;
-
-        this.requestAuthenticator = requestAuthenticatorFactory.create(authenticationScheme);
+        this.authenticationScheme = authenticationScheme;
+        //this.requestAuthenticator = requestAuthenticatorFactory.create(authenticationScheme);
 
         this.httpClientRequestFactory = new HttpClientRequestFactory();
 
@@ -253,7 +236,7 @@ public class HttpClientRequestExecutor implements RequestExecutor {
 
             // Sign the request
             if (this.apiKey != null) {
-                this.requestAuthenticator.authenticate(request, this.apiKey);
+                this.authenticationScheme.authenticate(request, this.apiKey);
             }
 
             HttpRequestBase httpRequest = this.httpClientRequestFactory.createHttpClientRequest(request, entity);
