@@ -36,9 +36,7 @@ import com.stormpath.sdk.http.Response
 import com.stormpath.sdk.impl.ds.DefaultDataStore
 import com.stormpath.sdk.impl.ds.JacksonMapMarshaller
 import com.stormpath.sdk.impl.ds.ResourceFactory
-import com.stormpath.sdk.http.Request
 import com.stormpath.sdk.impl.http.RequestExecutor
-import com.stormpath.sdk.http.Response
 import com.stormpath.sdk.impl.http.authc.SAuthc1RequestAuthenticator
 import com.stormpath.sdk.impl.http.authc.SAuthc1RequestAuthenticator
 import com.stormpath.sdk.impl.http.support.DefaultRequest
