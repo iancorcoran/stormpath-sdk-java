@@ -50,8 +50,8 @@ public class ClientsTest {
         def client = Clients.builder().setApiKey(new ClientApiKey('foo', 'bar')).build()
 
         assertNotNull client
-        assertEquals client.dataStore.apiKey.id, 'foo'
-        assertEquals client.dataStore.apiKey.secret, 'bar'
+        assertEquals client.dataStore.clientCredentials.id, 'foo'
+        assertEquals client.dataStore.clientCredentials.secret, 'bar'
 
         //caching is enabled by default in 1.0.RC3:
         assertTrue client.dataStore.cacheManager instanceof DefaultCacheManager

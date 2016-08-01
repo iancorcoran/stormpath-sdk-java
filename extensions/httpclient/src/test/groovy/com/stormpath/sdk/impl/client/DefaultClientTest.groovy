@@ -23,7 +23,7 @@ import com.stormpath.sdk.application.ApplicationList
 import com.stormpath.sdk.application.CreateApplicationRequest
 import com.stormpath.sdk.cache.CacheManager
 import com.stormpath.sdk.cache.Caches
-import com.stormpath.sdk.client.AuthenticationScheme
+import com.stormpath.sdk.client.AuthenticationSchemes
 import com.stormpath.sdk.client.Client
 import com.stormpath.sdk.directory.CreateDirectoryRequest
 import com.stormpath.sdk.directory.Directory
@@ -31,12 +31,12 @@ import com.stormpath.sdk.directory.DirectoryCriteria
 import com.stormpath.sdk.directory.DirectoryList
 import com.stormpath.sdk.ds.DataStore
 import com.stormpath.sdk.http.HttpMethod
+import com.stormpath.sdk.http.Request
+import com.stormpath.sdk.http.Response
 import com.stormpath.sdk.impl.ds.DefaultDataStore
 import com.stormpath.sdk.impl.ds.JacksonMapMarshaller
 import com.stormpath.sdk.impl.ds.ResourceFactory
-import com.stormpath.sdk.http.Request
 import com.stormpath.sdk.impl.http.RequestExecutor
-import com.stormpath.sdk.http.Response
 import com.stormpath.sdk.impl.http.authc.SAuthc1RequestAuthenticator
 import com.stormpath.sdk.impl.http.support.DefaultRequest
 import com.stormpath.sdk.tenant.Tenant
@@ -63,7 +63,7 @@ class DefaultClientTest {
         String baseUrl = "http://localhost:8080/v1"
         def proxy = createStrictMock(com.stormpath.sdk.client.Proxy)
         def cacheManager = createStrictMock(CacheManager)
-        def authcScheme = new SAuthc1RequestAuthenticator()
+        def authcScheme = AuthenticationSchemes.getAuthenticationScheme(AuthenticationSchemes.SAUTHC1)
         def connectionTimeout = 990011
 
         expect(proxy.getHost()).andReturn("192.168.2.110")
@@ -74,7 +74,7 @@ class DefaultClientTest {
 
         Client client = new DefaultClient(apiKey, baseUrl, proxy, cacheManager, authcScheme, connectionTimeout)
 
-        assertEquals(client.dataStore.requestExecutor.apiKey, apiKey)
+        assertEquals(client.dataStore.requestExecutor.clientCredentials, apiKey)
         assertEquals(client.dataStore.requestExecutor.httpClient.getParams().getParameter(AllClientPNames.SO_TIMEOUT), connectionTimeout)
         assertEquals(client.dataStore.requestExecutor.httpClient.getParams().getParameter(AllClientPNames.CONNECTION_TIMEOUT), connectionTimeout)
 
@@ -93,7 +93,7 @@ class DefaultClientTest {
             new DefaultClient(null, baseUrl, proxy, cacheManager, authcScheme, 10000)
             fail("Should have thrown due to null ApiKey")
         } catch (IllegalArgumentException ex) {
-            assertEquals(ex.getMessage(), "apiKey argument cannot be null.")
+            assertEquals(ex.getMessage(), "clientCredentials argument cannot be null.")
         }
     }
 

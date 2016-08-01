@@ -19,7 +19,7 @@ import com.stormpath.sdk.http.Request;
 import com.stormpath.sdk.lang.Assert;
 
 /**
- * Enumeration that defines the available HTTP authentication schemes to be used when communicating with the Stormpath API server.
+ * Authentication scheme to be used when communicating with the Stormpath API server.
  * </pre>
  * The Authentication Scheme setting is helpful in cases where the code is run in a platform where the header information for
  * outgoing HTTP requests is modified and thus causing communication issues. For example, for Google App Engine you

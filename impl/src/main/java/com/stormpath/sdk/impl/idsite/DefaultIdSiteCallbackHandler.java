@@ -17,6 +17,7 @@ package com.stormpath.sdk.impl.idsite;
 
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.application.Application;
+import com.stormpath.sdk.client.ClientCredentials;
 import com.stormpath.sdk.error.Error;
 import com.stormpath.sdk.error.jwt.InvalidJwtException;
 import com.stormpath.sdk.http.HttpMethod;
@@ -107,12 +108,12 @@ public class DefaultIdSiteCallbackHandler implements IdSiteCallbackHandler {
 
         Map jsonPayload = jwtWrapper.getJsonPayloadAsMap();
 
-        String apiKeyId;
+        String keyId;
 
         Map jsonHeader = jwtWrapper.getJsonHeaderAsMap();
-        apiKeyId = getRequiredValue(jsonHeader, KEY_ID);
+        keyId = getRequiredValue(jsonHeader, KEY_ID);
 
-        getJwtSignatureValidator(apiKeyId).validate(jwtWrapper);
+        getJwtSignatureValidator(keyId).validate(jwtWrapper);
 
         Number expire = getRequiredValue(jsonPayload, Claims.EXPIRATION);
 
@@ -231,12 +232,12 @@ public class DefaultIdSiteCallbackHandler implements IdSiteCallbackHandler {
         }
     }
 
-    private JwtSignatureValidator getJwtSignatureValidator(String jwtApiKeyId) {
+    private JwtSignatureValidator getJwtSignatureValidator(String jwtClientCredentialsId) {
 
-        ApiKey apiKey = dataStore.getApiKey();
+        ClientCredentials clientCredentials = dataStore.getClientCredentials();
 
-        if (apiKey.getId().equals(jwtApiKeyId)) {
-            return new JwtSignatureValidator(apiKey);
+        if (clientCredentials.getId().equals(jwtClientCredentialsId)) {
+            return new JwtSignatureValidator(clientCredentials);
         }
 
         throw new InvalidJwtException(InvalidJwtException.JWT_RESPONSE_INVALID_APIKEY_ID_ERROR);

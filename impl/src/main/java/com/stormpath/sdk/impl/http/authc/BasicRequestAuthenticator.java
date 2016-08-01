@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.SimpleTimeZone;
 
 /**
- * This {@link RequestAuthenticator} implements a <a href="http://docs.stormpath.com/rest/product-guide/#authentication-basic">HTTP
+ * This {@link AuthenticationScheme} implements a <a href="http://docs.stormpath.com/rest/product-guide/#authentication-basic">HTTP
  * Basic Authentication</a> scheme. This defines the HTTP authentication scheme to be used when communicating with the Stormpath API server.
  * </pre>
  * The `Client` gets the request authenticator configured via

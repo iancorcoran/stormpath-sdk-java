@@ -17,6 +17,7 @@ package com.stormpath.sdk.impl.http.httpclient;
 
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.client.AuthenticationScheme;
+import com.stormpath.sdk.client.ClientCredentials;
 import com.stormpath.sdk.client.Proxy;
 import com.stormpath.sdk.http.HttpHeaders;
 import com.stormpath.sdk.http.*;
@@ -77,7 +78,7 @@ public class HttpClientRequestExecutor implements RequestExecutor {
 
     private int numRetries = DEFAULT_MAX_RETRIES;
 
-    private final ApiKey apiKey;
+    private final ClientCredentials clientCredentials;
 
     private final AuthenticationScheme authenticationScheme;
     private DefaultHttpClient httpClient;
@@ -122,18 +123,17 @@ public class HttpClientRequestExecutor implements RequestExecutor {
     /**
      * Creates a new {@code HttpClientRequestExecutor} using the specified {@code ApiKey} and optional {@code Proxy}
      * configuration.
-     * @param apiKey the Stormpath account API Key that will be used to authenticate the client with Stormpath's API sever
+     * @param clientCredentials the Stormpath account API Key that will be used to authenticate the client with Stormpath's API sever
      * @param proxy the HTTP proxy to be used when communicating with the Stormpath API server (can be null)
      * @param authenticationScheme the HTTP authentication scheme to be used when communicating with the Stormpath API server.
      *                             If null, then Sauthc1 will be used.
      */
-    public HttpClientRequestExecutor(ApiKey apiKey, Proxy proxy, AuthenticationScheme authenticationScheme, Integer connectionTimeout) {
-        Assert.notNull(apiKey, "apiKey argument is required.");
+    public HttpClientRequestExecutor(ClientCredentials clientCredentials, Proxy proxy, AuthenticationScheme authenticationScheme, Integer connectionTimeout) {
+        Assert.notNull(clientCredentials, "clientCredentials argument is required.");
         Assert.isTrue(connectionTimeout >= 0, "Timeout cannot be a negative number.");
 
-        this.apiKey = apiKey;
+        this.clientCredentials = clientCredentials;
         this.authenticationScheme = authenticationScheme;
-        //this.requestAuthenticator = requestAuthenticatorFactory.create(authenticationScheme);
 
         this.httpClientRequestFactory = new HttpClientRequestFactory();
 
@@ -235,8 +235,8 @@ public class HttpClientRequestExecutor implements RequestExecutor {
             }
 
             // Sign the request
-            if (this.apiKey != null) {
-                this.authenticationScheme.authenticate(request, this.apiKey);
+            if (this.clientCredentials != null) {
+                this.authenticationScheme.authenticate(request, this.clientCredentials);
             }
 
             HttpRequestBase httpRequest = this.httpClientRequestFactory.createHttpClientRequest(request, entity);
