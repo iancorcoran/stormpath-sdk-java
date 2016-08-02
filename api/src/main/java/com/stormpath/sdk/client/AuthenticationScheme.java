@@ -16,7 +16,6 @@
 package com.stormpath.sdk.client;
 
 import com.stormpath.sdk.http.Request;
-import com.stormpath.sdk.lang.Assert;
 
 /**
  * Authentication scheme to be used when communicating with the Stormpath API server.
@@ -28,12 +27,20 @@ import com.stormpath.sdk.lang.Assert;
  * There are currently two authentication schemes available: <a href="http://docs.stormpath.com/rest/product-guide/#authentication-basic">HTTP
  * Basic Authentication</a> and <a href="http://docs.stormpath.com/rest/product-guide/#authentication-digest">Digest Authentication</a>
  *
- * @since 0.9.3
+ * @since 1.0.0
  */
 public interface AuthenticationScheme {
 
+    /**
+     * HTTP Request Authorization Header Name
+     */
     String AUTHORIZATION_HEADER = "Authorization";
 
+    /**
+     * Authenticates an HTTP Request using the supplied client credentials and sets the request authorization header.
+     * @param request HTTP Request to authenticate
+     * @param clientCredentials Credentials to be used to authenticate the request.
+     */
     void authenticate(Request request, ClientCredentials clientCredentials);
 
 }

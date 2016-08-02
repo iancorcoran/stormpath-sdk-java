@@ -37,8 +37,6 @@ import com.stormpath.sdk.impl.ds.DefaultDataStore
 import com.stormpath.sdk.impl.ds.JacksonMapMarshaller
 import com.stormpath.sdk.impl.ds.ResourceFactory
 import com.stormpath.sdk.impl.http.RequestExecutor
-import com.stormpath.sdk.impl.http.authc.SAuthc1RequestAuthenticator
-import com.stormpath.sdk.impl.http.authc.SAuthc1RequestAuthenticator
 import com.stormpath.sdk.impl.http.support.DefaultRequest
 import com.stormpath.sdk.tenant.Tenant
 import org.apache.http.client.params.AllClientPNames
@@ -64,7 +62,7 @@ class DefaultClientTest {
         String baseUrl = "http://localhost:8080/v1"
         def proxy = createStrictMock(com.stormpath.sdk.client.Proxy)
         def cacheManager = createStrictMock(CacheManager)
-        def authcScheme = AuthenticationSchemes.getAuthenticationScheme(AuthenticationSchemes.SAUTHC1)
+        def authcScheme = AuthenticationSchemes.SAUTHC1
         def connectionTimeout = 990011
 
         expect(proxy.getHost()).andReturn("192.168.2.110")
@@ -88,7 +86,7 @@ class DefaultClientTest {
         String baseUrl = "http://localhost:8080/v1"
         def proxy = createMock(com.stormpath.sdk.client.Proxy)
         def cacheManager = createMock(CacheManager)
-        def authcScheme = new SAuthc1RequestAuthenticator();
+        def authcScheme = AuthenticationSchemes.SAUTHC1;
 
         try {
             new DefaultClient(null, baseUrl, proxy, cacheManager, authcScheme, 10000)
@@ -103,7 +101,7 @@ class DefaultClientTest {
 
         def apiKey = createNiceMock(ApiKey)
         String baseUrl = "http://localhost:8080/v1"
-        def authcScheme = new SAuthc1RequestAuthenticator()
+        def authcScheme = AuthenticationSchemes.SAUTHC1;
         def cacheManager = Caches.newDisabledCacheManager();
 
         Client client = new DefaultClient(apiKey, baseUrl, null, cacheManager , authcScheme, 20000)

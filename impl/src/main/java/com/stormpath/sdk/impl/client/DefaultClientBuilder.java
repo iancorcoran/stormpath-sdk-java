@@ -282,7 +282,7 @@ public class DefaultClientBuilder implements ClientBuilder {
 
         AuthenticationScheme authenticationScheme = this.clientConfig.getAuthenticationScheme();
         if (authenticationScheme == null) {
-            authenticationScheme = AuthenticationSchemes.getAuthenticationScheme(null);
+            authenticationScheme = AuthenticationSchemes.SAUTHC1;
         }
 
         return new DefaultClient(this.apiKey, this.clientConfig.getBaseUrl(), this.proxy, this.cacheManager,

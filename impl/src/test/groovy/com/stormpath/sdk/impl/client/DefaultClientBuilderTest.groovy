@@ -1,6 +1,5 @@
 package com.stormpath.sdk.impl.client
 
-import com.stormpath.sdk.client.AuthenticationScheme
 import com.stormpath.sdk.client.Clients
 import com.stormpath.sdk.impl.cache.DefaultCache
 import com.stormpath.sdk.impl.http.authc.BasicRequestAuthenticator

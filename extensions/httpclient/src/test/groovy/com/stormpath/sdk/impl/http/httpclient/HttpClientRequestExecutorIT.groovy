@@ -51,7 +51,7 @@ class HttpClientRequestExecutorIT extends ClientIT {
         // this proves that we are *not* waiting on redirects
         def verifyUri = app.getHref() + "/authTokens/" + result.getAccessTokenString()
 
-        def httpClientRequestExecutor = new HttpClientRequestExecutor(client.getClientCredentials(), null, AuthenticationSchemes.getAuthenticationScheme(AuthenticationSchemes.SAUTHC1), 2000)
+        def httpClientRequestExecutor = new HttpClientRequestExecutor(client.getClientCredentials(), null, AuthenticationSchemes.SAUTHC1, 2000)
         httpClientRequestExecutor.setNumRetries(0)
 
         Callable<Response> callable = new Callable<Response>() {
